@@ -2,15 +2,17 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useModuleLabSolved } from "../../progress-state";
 
 export default function LabsPage() {
   const router = useRouter();
+  const lab1Solved = useModuleLabSolved("sqli", "lab1");
   
   const labs = [
     {
       id: "lab1",
       title: "SQL injection vulnerability in WHERE clause allowing retrieval of hidden data",
-      status: "Solved",
+      status: lab1Solved ? "Solved" : "Not solved",
       level: "Beginner",
     },
     {

@@ -1,16 +1,18 @@
 "use client";
+import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { markModuleLabSolved } from "../../../progress-state";
 
 const allProducts = [
-  { id: 1, name: "Professional Football", price: "$29.99", category: "Football", released: 1, img: "⚽" },
-  { id: 2, name: "Training Cones", price: "$15.00", category: "Football", released: 1, img: "⚠️" },
-  { id: 3, name: "Hidden Prototype Boot", price: "$199.99", category: "Football", released: 0, img: "🥾" },
-  { id: 4, name: "Referee Whistle", price: "$5.50", category: "Football", released: 1, img: "📢" },
-  { id: 5, name: "Goalkeeper Gloves", price: "$45.00", category: "Football", released: 0, img: "🧤" },
-  { id: 6, name: "Standard Shinguards", price: "$12.00", category: "Other", released: 1, img: "🛡️" },
-  { id: 7, name: "Lifestyle Hoodie", price: "$55.00", category: "Lifestyle", released: 1, img: "🧥" },
-  { id: 8, name: "Pet Jersey", price: "$25.00", category: "Pets", released: 1, img: "🐕" },
+  { id: 1, name: "Professional Football", price: "$29.99", category: "Football", released: 1, img: "" },
+  { id: 2, name: "Training Cones", price: "$15.00", category: "Football", released: 1, img: "" },
+  { id: 3, name: "Hidden Prototype Boot", price: "$199.99", category: "Football", released: 0, img: "" },
+  { id: 4, name: "Referee Whistle", price: "$5.50", category: "Football", released: 1, img: "" },
+  { id: 5, name: "Goalkeeper Gloves", price: "$45.00", category: "Football", released: 0, img: "" },
+  { id: 6, name: "Standard Shinguards", price: "$12.00", category: "Other", released: 1, img: "" },
+  { id: 7, name: "Lifestyle Hoodie", price: "$55.00", category: "Lifestyle", released: 1, img: "" },
+  { id: 8, name: "Pet Jersey", price: "$25.00", category: "Pets", released: 1, img: "" },
 ];
 
 export default function ShopLab() {
@@ -20,6 +22,12 @@ export default function ShopLab() {
 
   // Logic to determine if lab is solved
   const isSolved = categoryParam.toLowerCase().includes("' or 1=1") || categoryParam.includes("1=1");
+
+  useEffect(() => {
+    if (isSolved) {
+      markModuleLabSolved("sqli", "lab1");
+    }
+  }, [isSolved]);
 
   const getFilteredProducts = () => {
     if (!categoryParam) return allProducts.filter(p => p.released === 1);
@@ -54,7 +62,7 @@ export default function ShopLab() {
             ← Back
           </button>
           <span className="font-bold text-xl tracking-tighter">
-            CyberLearn <span className="text-orange-500 italic">Academy</span>
+            CyberLearn
           </span>
           <Link href="/learn/sqli/lab1" className="text-blue-600 hover:underline text-xs">
             Back to lab description
@@ -71,7 +79,7 @@ export default function ShopLab() {
       {/* Success Banner */}
       {isSolved && (
         <div className="bg-orange-500 text-white text-center py-3 font-bold text-lg shadow-inner animate-in slide-in-from-top duration-700">
-          Congratulations, you solved the lab! 🏆
+          Congratulations, you solved the lab!
         </div>
       )}
 

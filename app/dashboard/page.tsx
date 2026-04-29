@@ -1,8 +1,13 @@
 "use client";
 import Sidebar from "../components/sidebar";
 import Navbar from "../components/navbar";
+import { useOverallProgress } from "../learn/progress-state";
+
+const dashboardModuleIds = ["sqli", "xss", "csrf", "xxe"];
 
 export default function Dashboard() {
+  const overallProgress = useOverallProgress(dashboardModuleIds);
+
   return (
     <div className="min-h-screen bg-gray-100 flex">
       <Sidebar />
@@ -18,13 +23,23 @@ export default function Dashboard() {
             <div className="flex justify-between items-end mb-4">
               <div>
                 <h3 className="font-bold text-gray-800 text-xl">Overall Progress</h3>
-                <p className="text-gray-500 text-sm">You have completed 25% of the curriculum</p>
+                <p className="text-gray-500 text-sm">
+                  You have completed {overallProgress.percent}% of the curriculum
+                </p>
               </div>
-              <span className="text-indigo-600 font-bold text-lg">3 / 12 Modules</span>
+              <span className="text-indigo-600 font-bold text-lg">
+                {overallProgress.completedItems} / {overallProgress.totalItems} Tasks
+              </span>
             </div>
             <div className="w-full bg-gray-200 h-5 rounded-full overflow-hidden">
-              <div className="bg-indigo-600 h-full rounded-full transition-all duration-500" style={{ width: '25%' }}></div>
+              <div
+                className="bg-indigo-600 h-full rounded-full transition-all duration-500"
+                style={{ width: `${overallProgress.percent}%` }}
+              ></div>
             </div>
+            <p className="mt-3 text-sm text-gray-500">
+              {overallProgress.completedModules} / {overallProgress.totalModules} modules fully completed
+            </p>
           </div>
 
           {/* 2. AI Recommendation Card */}

@@ -3,10 +3,10 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
-    // 1. Get data
+    // receives data from the signup page
     const { name, email, password } = await req.json();
 
-    // 2. Validate input
+    // Validate input
     if (!name || !email || !password) {
       return Response.json(
         { message: "Please fill all fields" },
@@ -14,10 +14,10 @@ export async function POST(req) {
       );
     }
 
-    // 3. Pre-connection check (Fail fast if DB is down)
+    //Pre-connection check (Fail fast if DB is down)
     let client;
     try {
-      // If this fails, it jumps straight to the inner catch
+      // If this fails then it jumps straight to the inner catch
       client = await clientPromise;
       // Optional: Verify connection is actually alive
       await client.db("admin").command({ ping: 1 });
@@ -31,7 +31,7 @@ export async function POST(req) {
 
     const db = client.db("cyberlearn");
 
-    // 4. Check existing user
+    //Check existing user
     const existingUser = await db.collection("users").findOne({ email });
 
     if (existingUser) {
@@ -41,10 +41,10 @@ export async function POST(req) {
       );
     }
 
-    // 5. Hash password (Only happens if DB is confirmed connected)
+    //Hash password (Only happens if DB is confirmed connected)
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 6. Save user
+    //Save user
     await db.collection("users").insertOne({
       name,
       email,

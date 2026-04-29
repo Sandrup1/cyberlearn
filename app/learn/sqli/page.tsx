@@ -42,7 +42,7 @@ export default function SQLiPage() {
                 <a href="#video" className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-black transition-colors">
                     Video
                 </a>
-                <a href="#quiz" className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-black transition-colors">
+                <a href="quiz/sqli-module" className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-black transition-colors">
                     Quiz
                 </a>
 

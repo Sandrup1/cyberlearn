@@ -14,14 +14,14 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Check if fields are filled
+    // Check if fields are filled
     if (!form.name || !form.email || !form.password) {
       alert("Please fill all fields");
       return;
     }
 
     try {
-      // 2. Send data to backend API
+      //Send data to backend API
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: {
@@ -32,10 +32,10 @@ export default function Signup() {
 
       const data = await res.json();
 
-      // 3. Show response message
+      //Show response message
       alert(data.message);
 
-      // 4. Redirect if success
+      //Redirect if success
       if (res.ok) {
         router.push("/login");
       }
