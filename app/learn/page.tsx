@@ -3,35 +3,32 @@ import Sidebar from "../components/sidebar";
 import Navbar from "../components/navbar";
 import Link from "next/link";
 import { useModuleProgress } from "./progress-state";
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
 
-  const topics = [
-    {
-      id: "sqli",
-      title: "SQLi",
-      desc: "SQL Injection attacks manipulate database queries through user input.",
-      link: "/learn/sqli",
-    },
-    {
-      id: "xss",
-      title: "XSS",
-      desc: "Cross-Site Scripting (XSS) attacks manipulate user input.",
-      link: "/learn/xss",
-    },
-    {
-      id: "csrf",
-      title: "CSRF",
-      desc: "Cross-Site Request Forgery tricks users into executing unwanted actions.",
-      link: "/learn/csrf",
-    },
-    {
-      id: "xxe",
-      title: "XXE",
-      desc: "XML External Entity attacks exploit sensitive data.",
-      link: "/learn/xxe",
-    },
-  ];
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/courses")
+      .then((res) => res.json())
+      .then((data) => {
+        setTopics(
+          data.map((course: any) => ({
+            id: course.moduleId,
+            title: course.shortTitle || course.title,
+            desc: course.description,
+            link: `/learn/${course.moduleId}`,
+          }))
+        );
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
@@ -47,9 +44,13 @@ export default function Dashboard() {
         {/* Content */}
         <div className="p-10 grid grid-cols-1 md:grid-cols-2 gap-10">
 
-          {topics.map((item) => (
-            <ModuleCard key={item.id} item={item} />
-          ))}
+          {loading ? (
+            <p className="text-gray-500">Loading courses...</p>
+          ) : topics.length === 0 ? (
+            <p className="text-gray-500">No courses available.</p>
+          ) : (
+            topics.map((item) => <ModuleCard key={item.id} item={item} />)
+          )}
 
         </div>
       </div>

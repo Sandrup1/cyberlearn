@@ -1,79 +1,41 @@
 import clientPromise from "../../../lib/mongodb";
+import { normalizeModuleId, normalizeQuiz } from "../../../lib/quizzes";
 
-const fallbackQuizzes = {
-  sqli: {
-    title: "SQL Injection Quiz",
-    questions: [
-      {
-        question: "What does SQL injection primarily target?",
-        options: [
-          "Frontend UI components",
-          "Database queries and structure",
-          "Client-side CSS styling",
-        ],
-      },
-      {
-        question: "Which practice helps prevent SQL injection?",
-        options: [
-          "Parameterized queries",
-          "Longer CSS class names",
-          "Disabling browser cookies",
-        ],
-      },
-      {
-        question: "What can an attacker try to change during a SQL injection attack?",
-        options: [
-          "The structure or logic of a database query",
-          "The user's screen brightness",
-          "The website font family",
-        ],
-      },
-    ],
-  },
-};
+function removeAnswers(quiz) {
+  return {
+    moduleId: quiz.moduleId,
+    title: quiz.title,
+    passScore: quiz.passScore ?? 6,
+    levels: (quiz.levels || []).map((level) => ({
+      id: level.id,
+      title: level.title,
+      questions: level.questions.map((question) => ({
+        question: question.question,
+        options: question.options,
+      })),
+    })),
+  };
+}
 
-export async function GET(req, { params }) {
+export async function GET(_req, { params }) {
   try {
-    const { moduleId } = await params;
-
-    if (!moduleId) {
-      return Response.json({ error: "Module ID is required" }, { status: 400 });
-    }
-
+    const { moduleId: rawModuleId } = await params;
+    const moduleId = normalizeModuleId(rawModuleId);
     let quiz = null;
-    let dbError = null;
 
     try {
       const client = await clientPromise;
       const db = client.db("cyberlearn");
       quiz = await db.collection("quizzes").findOne({ moduleId });
     } catch (error) {
-      dbError = error;
       console.error("Quiz DB lookup failed:", error);
     }
 
-    const resolvedQuiz = quiz || fallbackQuizzes[moduleId];
-
-    if (!resolvedQuiz) {
-      if (dbError) {
-        return Response.json(
-          { error: "Quiz database unavailable" },
-          { status: 503 }
-        );
-      }
-
+    if (!quiz) {
       return Response.json({ error: "Quiz not found" }, { status: 404 });
     }
 
-    const safeQuestions = resolvedQuiz.questions.map((q) => ({
-      question: q.question,
-      options: q.options,
-    }));
-
-    return Response.json({
-      title: resolvedQuiz.title,
-      questions: safeQuestions,
-    });
+    return Response.json(removeAnswers(normalizeQuiz(quiz)));
   } catch (error) {
     console.error("Quiz API Error:", error);
 

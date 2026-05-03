@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { saveUserProfile } from "../lib/user-profile";
 
 export default function Login() {
   const router = useRouter();
@@ -21,12 +22,19 @@ export default function Login() {
       const data = await res.json();
 
       if (res.ok) {
+        saveUserProfile({
+          name: data.user?.name || form.email.split("@")[0],
+          email: data.user?.email || form.email,
+          memberSince: data.user?.createdAt
+            ? new Date(data.user.createdAt).getFullYear().toString()
+            : undefined,
+        });
         alert("Login successful!");
         router.push("/dashboard");
       } else {
         alert(data.message || "Login failed");
       }
-    } catch (err) {
+    } catch {
       alert("Something went wrong. Check your connection.");
     } finally {
       setLoading(false);

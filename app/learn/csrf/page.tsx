@@ -49,7 +49,7 @@ export default function CSRFPage() {
 
                 <div className="border-t my-3"></div>
 
-                <Link href="/labs/csrf">
+                <Link href="/learn/csrf/lablist">
                     <div className="block px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800 cursor-pointer text-center">
                     🧪 View CSRF Labs
                     </div>
@@ -93,12 +93,12 @@ export default function CSRFPage() {
               <h2 className="text-xl font-semibold mb-3 text-black">Example Attack HTML</h2>
               <p className="mb-2 text-sm text-gray-600">This hidden form is hosted on the attacker's site:</p>
               <div className="bg-black text-green-400 p-4 rounded text-sm overflow-x-auto">
-{`<form action="https://vulnerable-website.com/email/change" method="POST">
-  <input type="hidden" name="email" value="pwned@attacker.com" />
-</form>
-<script>
-  document.forms[0].submit();
-</script>`}
+              {`<form action="https://vulnerable-website.com/email/change" method="POST">
+                <input type="hidden" name="email" value="pwned@attacker.com" />
+              </form>
+              <script>
+                document.forms[0].submit();
+              </script>`}
               </div>
             </section>
 

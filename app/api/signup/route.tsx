@@ -1,7 +1,7 @@
 import clientPromise from "../../lib/mongodb";
 import bcrypt from "bcryptjs";
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     // receives data from the signup page
     const { name, email, password } = await req.json();

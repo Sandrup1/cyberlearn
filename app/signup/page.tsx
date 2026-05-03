@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { saveUserProfile } from "../lib/user-profile";
 
 export default function Signup() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function Signup() {
     password: "",
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Check if fields are filled
@@ -37,10 +38,15 @@ export default function Signup() {
 
       //Redirect if success
       if (res.ok) {
-        router.push("/login");
+        saveUserProfile({
+          name: form.name,
+          email: form.email,
+          memberSince: new Date().getFullYear().toString(),
+        });
+        router.push("/welcome");
       }
 
-    } catch (error) {
+    } catch {
       alert("Something went wrong");
     }
   };
