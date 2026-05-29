@@ -8,7 +8,7 @@ function Home() {
         <h1 className="font-semibold text-lg">CyberLearn AI</h1>
 
         <div className="flex items-center gap-6">
-          <a href="#" className="text-gray-700 hover:text-black">Home</a>
+          <a href="#" className="text-gray-900 hover:text-black">Home</a>
           <a href="#" className="text-gray-700 hover:text-black">Learn</a>
           <Link href="/signup">
             <button className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600">

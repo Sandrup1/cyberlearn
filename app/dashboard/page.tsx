@@ -220,7 +220,7 @@ export default function Dashboard() {
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <h3 className="font-bold text-indigo-600 mb-1 text-lg">
-                  AI Recommendation + Areas to Improve
+                 Recommendation
                 </h3>
                 <p className="text-sm text-gray-500">
                   Module:{" "}

@@ -1,7 +1,5 @@
 "use client";
 
-import Sidebar from "../../components/sidebar";
-import Navbar from "../../components/navbar";
 import Link from "next/link";
 
 export default function CSRFPage() {
@@ -54,6 +52,12 @@ export default function CSRFPage() {
                     🧪 View CSRF Labs
                     </div>
                 </Link>
+
+                <Link href="/quiz/csrf">
+                    <div className="block px-3 py-2 rounded-lg border border-black text-black hover:bg-gray-50 cursor-pointer text-center font-bold">
+                    Attempt Quiz
+                    </div>
+                </Link>
               </div>
             </div>
           </div>
@@ -76,7 +80,7 @@ export default function CSRFPage() {
               <ul className="list-disc pl-6 space-y-2 text-black">
                 <li><strong>A relevant action:</strong> An action the attacker wants to induce (like changing a password).</li>
                 <li><strong>Cookie-based session handling:</strong> The application relies solely on cookies to identify the user.</li>
-                <li><strong>No unpredictable parameters:</strong> The request doesn't contain any values the attacker can't guess (like a CSRF token).</li>
+                <li><strong>No unpredictable parameters:</strong> The request doesn&apos;t contain any values the attacker can&apos;t guess (like a CSRF token).</li>
               </ul>
             </section>
 
@@ -84,14 +88,14 @@ export default function CSRFPage() {
             <section id="impact" className="bg-white p-6 rounded-xl shadow-md">
               <h2 className="text-xl font-semibold mb-3 text-black">Impact</h2>
               <p className="text-black">
-                An attacker can gain full control over a user's account. If the victim is a privileged user (Admin), the attacker might take over the entire application.
+                An attacker can gain full control over a user&apos;s account. If the victim is a privileged user (Admin), the attacker might take over the entire application.
               </p>
             </section>
 
             {/* EXAMPLE */}
             <section id="example" className="bg-white p-6 rounded-xl shadow-md">
               <h2 className="text-xl font-semibold mb-3 text-black">Example Attack HTML</h2>
-              <p className="mb-2 text-sm text-gray-600">This hidden form is hosted on the attacker's site:</p>
+              <p className="mb-2 text-sm text-gray-600">This hidden form is hosted on the attacker&apos;s site:</p>
               <div className="bg-black text-green-400 p-4 rounded text-sm overflow-x-auto">
               {`<form action="https://vulnerable-website.com/email/change" method="POST">
                 <input type="hidden" name="email" value="pwned@attacker.com" />

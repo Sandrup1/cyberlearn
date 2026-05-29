@@ -149,6 +149,13 @@ export default function ModuleContentPage({
                 >
                   View {content.shortTitle} Labs
                 </Link>
+
+                <Link
+                  href={content.quizPath}
+                  className="block px-3 py-2 rounded-lg border border-black text-black hover:bg-gray-50 transition-all cursor-pointer text-center font-bold"
+                >
+                  Attempt Quiz
+                </Link>
               </div>
             </div>
           </aside>
@@ -220,14 +227,16 @@ export default function ModuleContentPage({
 
                 {section.videoUrl && (
                   <div className="space-y-3 mt-5">
-                    <div className="aspect-video w-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
-                      <iframe
-                        className="w-full h-full"
-                        src={normalizeVideoEmbedUrl(section.videoUrl)}
-                        title={`${content.title} video`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                      ></iframe>
+                    <div className="mx-auto w-full max-w-3xl">
+                      <div className="aspect-video w-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                        <iframe
+                          className="w-full h-full"
+                          src={normalizeVideoEmbedUrl(section.videoUrl)}
+                          title={`${content.title} video`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
                     </div>
                     <a
                       className="inline-flex text-sm font-semibold text-gray-600 hover:text-black underline-offset-4 hover:underline"
