@@ -1,5 +1,7 @@
 "use client";
+
 import { useState } from "react";
+import "../../../components/xss-lab.css";
 
 export default function XSSLabPage() {
   const [query, setQuery] = useState("");
@@ -18,19 +20,18 @@ export default function XSSLabPage() {
   };
 
   return (
-    <div className="bg-white min-h-screen text-black">
-
+    <div className="xss-lab-container">
       {/* Top Bar */}
-      <div className="border-b border-gray-200 p-4 flex justify-between items-center">
-        <h1 className="font-bold">Web Security Academy</h1>
+      <div className="xss-top-bar">
+        <h1 className="xss-top-bar-title">Web Security Academy</h1>
 
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-bold border border-black px-2 py-1 uppercase">
+        <div className="xss-top-bar-badge-area">
+          <span className="xss-lab-badge">
             LAB
           </span>
 
-          <span className={`text-xs font-bold px-3 py-1 border ${
-            solved ? "border-black text-black" : "border-gray-300 text-gray-400"
+          <span className={`xss-status-badge ${
+            solved ? "solved" : "unsolved"
           }`}>
             {solved ? "Solved" : "Not solved"}
           </span>
@@ -38,30 +39,29 @@ export default function XSSLabPage() {
       </div>
 
       {/* Content */}
-      <div className="flex justify-center p-10">
-        <div className="w-full max-w-3xl">
-
+      <div className="xss-content-wrap">
+        <div className="xss-main-width">
           {/* Title */}
-          <h2 className="text-3xl font-bold mb-6 text-center">
+          <h2 className="xss-lab-title">
             Reflected XSS Lab
           </h2>
 
           {/* Search Bar */}
           <form
             onSubmit={handleSearch}
-            className="flex gap-2 mb-10"
+            className="xss-form search-form"
           >
             <input
               type="text"
               placeholder="Search the blog..."
-              className="flex-1 border border-black p-3 focus:outline-none"
+              className="xss-input flex-1"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
 
             <button
               type="submit"
-              className="bg-black text-white px-6 font-bold hover:bg-gray-800"
+              className="xss-submit-btn search-btn"
             >
               Search
             </button>
@@ -69,8 +69,8 @@ export default function XSSLabPage() {
 
           {/* Reflected Output (VULNERABLE) */}
           {searchValue && (
-            <div className="mb-6 border border-gray-200 p-4">
-              <p className="text-sm text-gray-600 mb-2">Search results for:</p>
+            <div className="xss-reflected-box">
+              <p className="xss-reflected-label">Search results for:</p>
 
               {/* ⚠️ Intentionally vulnerable */}
               <div
@@ -80,17 +80,15 @@ export default function XSSLabPage() {
           )}
 
           {/* Blog Post */}
-          <div className="border border-gray-200 p-6">
-            <h3 className="text-xl font-bold mb-2">Identity Theft</h3>
-            <p className="text-gray-700 text-sm">
-              I'm guessing all the people that used to steal people's identities
+          <div className="xss-blog-preview-card">
+            <h3 className="xss-preview-card-title">Identity Theft</h3>
+            <p className="xss-preview-card-text">
+              I&apos;m guessing all the people that used to steal people&apos;s identities
               are probably very lazy now...
             </p>
           </div>
-
         </div>
       </div>
-
     </div>
   );
 }

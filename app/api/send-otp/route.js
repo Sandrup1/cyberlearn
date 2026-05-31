@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { transporter } from "@/lib/mailer";
+import { transporter } from "../../../lib/mailer";
 import clientPromise from "../../lib/mongodb";
-import { createOrReplaceOtp, deleteOtpForEmail } from "@/lib/otp-store";
+import { createOrReplaceOtp, deleteOtpForEmail } from "../../../lib/otp-store";
 
 function normalizeEmail(email) {
   return String(email ?? "").trim().toLowerCase();

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { clearUserProfile, getProfileInitials, useUserProfile } from "../../lib/user-profile";
+import "./admin-topbar.css";
 
 function getTitleFromPath(pathname) {
   if (pathname === "/admin") return "Dashboard";
@@ -39,36 +40,36 @@ export default function AdminTopbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-10 border-b border-gray-200 bg-white/90 backdrop-blur">
-      <div className="flex items-center justify-between px-6 py-4">
+    <header className="admin-topbar">
+      <div className="admin-topbar-wrapper">
         <div>
-          <h1 className="text-xl font-extrabold text-gray-950">{title}</h1>
-          <p className="mt-0.5 text-xs font-semibold text-gray-500">
+          <h1 className="admin-topbar-title">{title}</h1>
+          <p className="admin-topbar-subtitle">
             Admin workspace
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="admin-topbar-actions">
           <Link
             href="/"
-            className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 transition hover:bg-gray-50"
+            className="btn-secondary"
           >
             View Site
           </Link>
 
-          <div className="relative" ref={dropdownRef}>
+          <div className="dropdown-container" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setOpen((prev) => !prev)}
               aria-haspopup="menu"
               aria-expanded={open}
-              className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-bold text-gray-800 transition hover:bg-gray-50"
+              className="profile-btn"
             >
-              <span className="hidden max-w-[180px] truncate sm:block">
+              <span className="profile-name">
                 {profile.name}
               </span>
               <span
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 bg-cover bg-center text-xs font-extrabold text-white"
+                className="profile-avatar"
                 style={
                   profile.photoDataUrl
                     ? { backgroundImage: `url(${profile.photoDataUrl})` }
@@ -83,35 +84,35 @@ export default function AdminTopbar() {
             {open && (
               <div
                 role="menu"
-                className="absolute right-0 mt-2 w-64 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
+                className="admin-dropdown"
               >
-                <div className="border-b border-gray-100 px-4 py-3">
-                  <div className="text-sm font-extrabold text-gray-950">
+                <div className="dropdown-header">
+                  <div className="dropdown-name">
                     {profile.name}
                   </div>
-                  <div className="mt-0.5 truncate text-xs font-semibold text-gray-500">
+                  <div className="dropdown-email">
                     {profile.email}
                   </div>
                 </div>
 
-                <div className="p-2">
+                <div className="dropdown-body">
                   <Link
                     href="/profile"
-                    className="block rounded-lg px-3 py-2 text-sm font-bold text-gray-700 transition hover:bg-gray-50"
+                    className="dropdown-link"
                     onClick={() => setOpen(false)}
                   >
                     View Profile
                   </Link>
                   <Link
                     href="/settings"
-                    className="block rounded-lg px-3 py-2 text-sm font-bold text-gray-700 transition hover:bg-gray-50"
+                    className="dropdown-link"
                     onClick={() => setOpen(false)}
                   >
                     Edit Profile
                   </Link>
                   <Link
                     href="/login"
-                    className="mt-1 block rounded-lg px-3 py-2 text-sm font-extrabold text-red-600 transition hover:bg-red-50"
+                    className="dropdown-link logout"
                     onClick={handleLogout}
                   >
                     Logout
@@ -125,4 +126,3 @@ export default function AdminTopbar() {
     </header>
   );
 }
-

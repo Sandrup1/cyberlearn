@@ -11,6 +11,7 @@ import {
   markLabAttempted,
   useModuleLabSolved,
 } from "../progress-state";
+import "./generic-lab-page.css";
 
 export default function GenericLabPage({
   moduleId,
@@ -62,44 +63,44 @@ export default function GenericLabPage({
   }, [fallbackContent, fallbackLab, labId, moduleId]);
 
   return (
-    <div className="min-h-screen bg-white px-6 py-10 text-black">
-      <main className="mx-auto max-w-4xl rounded-lg border border-gray-200 p-8 shadow-sm">
+    <div className="generic-lab-container">
+      <main className="lab-main-card">
         <Link
           href={content.labPath}
-          className="mb-6 inline-block text-sm font-semibold text-gray-500 hover:text-black"
+          className="lab-back-link"
         >
-          Back to {content.shortTitle} labs
+          &larr; Back to {content.shortTitle} labs
         </Link>
 
-        <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-400">
+        <p className="lab-type-label">
           Editable Lab
         </p>
+
         <div
-          className={`mb-5 inline-flex rounded border px-4 py-1 text-xs font-black uppercase tracking-wide ${
-            solved
-              ? "border-green-600 bg-green-50 text-green-700"
-              : "border-black text-black"
+          className={`lab-status-badge ${
+            solved ? "lab-status-solved" : "lab-status-unsolved"
           }`}
         >
           Lab: {solved ? "solved" : "not solved"}
         </div>
-        <h1 className="mb-4 text-3xl font-bold">{lab.title}</h1>
-        <p className="mb-6 text-gray-600">{lab.summary}</p>
 
-        <section className="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-5">
-          <h2 className="mb-2 text-lg font-bold">Objective</h2>
-          <p className="text-gray-700">{lab.objective}</p>
+        <h1 className="lab-title">{lab.title}</h1>
+        <p className="lab-summary">{lab.summary}</p>
+
+        <section className="lab-section-objective">
+          <h2 className="lab-section-title">Objective</h2>
+          <p className="lab-objective-text">{lab.objective}</p>
         </section>
 
         {lab.starterCode && (
-          <pre className="mb-6 overflow-x-auto rounded-lg bg-black p-5 text-sm leading-7 text-green-300">
+          <pre className="lab-code-block">
             <code>{lab.starterCode}</code>
           </pre>
         )}
 
-        <section className="mb-6 rounded-lg border border-gray-200 p-5">
-          <h2 className="mb-4 text-lg font-bold">Solution Guide</h2>
-          <ol className="ml-6 list-decimal space-y-3 text-gray-700">
+        <section className="lab-section-solution">
+          <h2 className="lab-section-title">Solution Guide</h2>
+          <ol className="lab-steps-list">
             {lab.solutionSteps.map((step) => (
               <li key={step}>{step}</li>
             ))}
@@ -107,15 +108,15 @@ export default function GenericLabPage({
         </section>
 
         {lab.defenseNote && (
-          <section className="mb-6 rounded-lg bg-gray-950 p-5 text-white">
-            <h2 className="mb-2 text-lg font-bold">Defense Note</h2>
-            <p className="text-sm leading-6 text-gray-200">{lab.defenseNote}</p>
+          <section className="lab-section-defense">
+            <h2 className="lab-defense-title">Defense Note</h2>
+            <p className="lab-defense-text">{lab.defenseNote}</p>
           </section>
         )}
 
         <button
           onClick={() => markModuleLabSolved(moduleId, labId)}
-          className="rounded-lg bg-black px-6 py-3 font-bold text-white hover:bg-gray-800"
+          className="lab-submit-btn"
         >
           {solved ? "Submitted" : "Submit Lab"}
         </button>

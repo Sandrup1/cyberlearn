@@ -1,8 +1,10 @@
 "use client";
-import { useEffect } from "react";
+
+import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { markModuleLabSolved } from "../../../progress-state";
+import "../../../components/shop.css";
 
 const allProducts = [
   { id: 1, name: "Professional Football", price: "$29.99", category: "Football", released: 1, img: "" },
@@ -15,7 +17,7 @@ const allProducts = [
   { id: 8, name: "Pet Jersey", price: "$25.00", category: "Pets", released: 1, img: "" },
 ];
 
-export default function ShopLab() {
+function ShopLabInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const categoryParam = searchParams.get("category") || "";
@@ -51,26 +53,26 @@ export default function ShopLab() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-black">
-      {/* Updated Header with CyberLearn Branding */}
-      <div className="border-b border-gray-200 p-4 flex justify-between items-center bg-gray-50">
-        <div className="flex items-center gap-6">
+    <div className="shop-container">
+      {/* Header */}
+      <div className="shop-header">
+        <div className="shop-header-left">
           <button 
             onClick={() => router.back()}
-            className="text-gray-600 hover:text-black flex items-center gap-1 text-sm font-medium transition-colors"
+            className="header-back-btn"
           >
             ← Back
           </button>
-          <span className="font-bold text-xl tracking-tighter">
+          <span className="header-brand">
             CyberLearn
           </span>
-          <Link href="/learn/sqli/lab1" className="text-blue-600 hover:underline text-xs">
+          <Link href="/learn/sqli/lab1" className="header-brand-desc-link">
             Back to lab description
           </Link>
         </div>
         
-        <div className={`px-4 py-1 rounded-full text-xs font-bold transition-all duration-500 ${
-          isSolved ? 'bg-green-600 text-white shadow-lg scale-110' : 'bg-gray-200 text-gray-500'
+        <div className={`header-status-badge ${
+          isSolved ? 'solved' : 'unsolved'
         }`}>
           LAB: {isSolved ? "SOLVED" : "NOT SOLVED"}
         </div>
@@ -78,30 +80,30 @@ export default function ShopLab() {
 
       {/* Success Banner */}
       {isSolved && (
-        <div className="bg-orange-500 text-white text-center py-3 font-bold text-lg shadow-inner animate-in slide-in-from-top duration-700">
+        <div className="success-banner">
           Congratulations, you solved the lab!
         </div>
       )}
 
-      <main className="max-w-6xl mx-auto p-12">
-        {/* Gray Logo Style */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-light text-gray-400 tracking-[0.2em] uppercase mb-1">WE LIKE TO</h1>
-          <h2 className="text-8xl font-black text-gray-700 tracking-tighter">SHOP</h2>
+      <main className="shop-main">
+        {/* Logo */}
+        <div className="shop-logo-section">
+          <h1 className="shop-logo-subtitle">WE LIKE TO</h1>
+          <h2 className="shop-logo-title">SHOP</h2>
         </div>
 
-        {/* Clickable Refine Search Bar */}
-        <div className="bg-gray-50 border border-gray-100 p-5 rounded-lg mb-10 flex gap-6 items-center shadow-sm">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">Refine search:</span>
-          <div className="flex gap-6 text-sm">
+        {/* Refine Search Bar */}
+        <div className="refine-bar">
+          <span className="refine-label">Refine search:</span>
+          <div className="refine-links-wrapper">
             {["All", "Football", "Lifestyle", "Pets"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
-                className={`transition-all hover:text-blue-600 ${
+                className={`refine-tab-btn ${
                   (categoryParam === cat || (cat === "All" && !categoryParam)) 
-                    ? "font-bold text-black border-b-2 border-black" 
-                    : "text-gray-500"
+                    ? "active" 
+                    : "inactive"
                 }`}
               >
                 {cat}
@@ -111,23 +113,23 @@ export default function ShopLab() {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="product-grid-gallery">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="border border-gray-200 rounded-xl overflow-hidden flex flex-col group hover:border-gray-400 transition-all bg-white shadow-sm">
-              <div className="h-44 bg-gray-50 flex items-center justify-center text-5xl group-hover:scale-110 transition-transform duration-500">
+            <div key={product.id} className="shop-product-card">
+              <div className="product-img-box">
                 {product.img}
               </div>
-              <div className="p-5 border-t border-gray-100">
-                <div className="flex justify-between items-start mb-1">
-                  <h3 className="font-bold text-sm text-gray-800">{product.name}</h3>
+              <div className="product-card-body">
+                <div className="product-card-header-row">
+                  <h3 className="product-card-name">{product.name}</h3>
                   {product.released === 0 && (
-                    <span className="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black tracking-tighter">HIDDEN</span>
+                    <span className="hidden-badge">HIDDEN</span>
                   )}
                 </div>
-                <div className="flex text-yellow-400 text-[10px] mb-3">★★★★★</div>
-                <p className="font-black text-xl text-gray-900">{product.price}</p>
+                <div className="stars-rating">★★★★★</div>
+                <p className="product-price">{product.price}</p>
               </div>
-              <button className="w-full bg-gray-800 text-white py-3 text-xs font-bold mt-auto hover:bg-black transition-colors">
+              <button className="view-details-btn">
                 View details
               </button>
             </div>
@@ -135,5 +137,13 @@ export default function ShopLab() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ShopLab() {
+  return (
+    <Suspense fallback={<div className="shop-container" style={{ padding: "2rem", color: "#ccc" }}>Loading Shop...</div>}>
+      <ShopLabInner />
+    </Suspense>
   );
 }

@@ -6,17 +6,14 @@ import {
   getDefaultCourseContent,
 } from "../../lib/course-content";
 import { initializeModuleProgress, markModuleVideoWatched } from "../progress-state";
+import "./module-content-page.css";
 
 function cardClasses(tone) {
   const styles = {
-    green:
-      "border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-emerald-100 text-emerald-950",
-    blue:
-      "border-sky-200 bg-gradient-to-br from-sky-50 via-white to-indigo-100 text-slate-950",
-    amber:
-      "border-amber-200 bg-gradient-to-br from-amber-50 via-white to-orange-100 text-amber-950",
-    red:
-      "border-rose-200 bg-gradient-to-br from-rose-50 via-white to-fuchsia-100 text-rose-950",
+    green: "card-green",
+    blue: "card-blue",
+    amber: "card-amber",
+    red: "card-red",
   };
 
   return styles[tone] || styles.blue;
@@ -96,58 +93,58 @@ export default function ModuleContentPage({
   }, [fallbackContent, moduleId]);
 
   if (loading) {
-    return <div className="min-h-screen bg-gray-100 p-10">Loading course content...</div>;
+    return <div className="loading-screen">Loading course content...</div>;
   }
 
   if (!content) {
     return (
-      <div className="min-h-screen bg-gray-100 p-10">
-        <h1 className="text-2xl font-bold">Course Not Found</h1>
-        <Link href="/dashboard" className="text-blue-500 hover:underline">Return to Dashboard</Link>
+      <div className="error-screen">
+        <h1 className="error-title">Course Not Found</h1>
+        <Link href="/dashboard" className="error-link">Return to Dashboard</Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex text-black">
-      <div className="flex-1">
-        <div className="flex">
-          <aside className="w-72 p-6">
-            <div className="bg-white rounded-xl shadow-md p-5 sticky top-6 border border-gray-100">
+    <div className="module-container">
+      <div className="module-layout-wrapper">
+        <div style={{ display: "flex", width: "100%" }}>
+          <aside className="module-sidebar">
+            <div className="sidebar-sticky-card">
               <Link
                 href="/dashboard"
-                className="text-sm text-gray-500 hover:underline block mb-4"
+                className="sidebar-back-link"
               >
                 &larr; Back to Dashboard
               </Link>
 
-              <h2 className="font-semibold mb-4 text-black text-xl tracking-tight">
+              <h2 className="sidebar-title">
                 {content.shortTitle} Sections
               </h2>
 
-              <div className="space-y-2 text-sm">
+              <div className="sidebar-nav-list">
                 {content.sections.map((section) => (
                   <a
                     key={section.id}
                     href={`#${section.id}`}
-                    className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-black transition-colors"
+                    className="sidebar-nav-link"
                   >
                     {section.label}
                   </a>
                 ))}
 
-                <div className="border-t my-3"></div>
+                <div className="sidebar-divider"></div>
 
                 <Link
                   href={content.labPath}
-                  className="block px-3 py-2 rounded-lg bg-black text-white hover:bg-gray-800 transition-all cursor-pointer text-center font-bold"
+                  className="sidebar-btn-black"
                 >
                   View {content.shortTitle} Labs
                 </Link>
 
                 <Link
                   href={content.quizPath}
-                  className="block px-3 py-2 rounded-lg border border-black text-black hover:bg-gray-50 transition-all cursor-pointer text-center font-bold"
+                  className="sidebar-btn-outline"
                 >
                   Attempt Quiz
                 </Link>
@@ -155,32 +152,32 @@ export default function ModuleContentPage({
             </div>
           </aside>
 
-          <main className="flex-1 p-10 space-y-16">
+          <main className="module-main-content">
             {content.sections.map((section, index) => (
               <section
                 key={section.id}
                 id={section.id}
-                className="bg-white p-6 rounded-xl shadow-md border border-gray-100"
+                className="content-section"
               >
                 {index === 0 ? (
-                  <h1 className="text-2xl font-bold mb-3 text-black">
+                  <h1 className="section-title-h1">
                     {section.heading}
                   </h1>
                 ) : (
-                  <h2 className="text-xl font-semibold mb-3 text-black">
+                  <h2 className="section-title-h2">
                     {section.heading}
                   </h2>
                 )}
 
                 {section.body && (
-                  <p className="text-gray-700 leading-relaxed">{section.body}</p>
+                  <p className="section-body-text">{section.body}</p>
                 )}
 
                 {section.items && (
-                  <ul className="list-disc pl-6 space-y-3 text-gray-700 font-medium mt-4">
+                  <ul className="section-list">
                     {section.items.map((item) => (
-                      <li key={item.title}>
-                        <span className="text-black font-bold">
+                      <li key={item.title} className="section-list-item">
+                        <span className="bold-dark-text">
                           {item.title}:
                         </span>{" "}
                         {item.body}
@@ -190,10 +187,10 @@ export default function ModuleContentPage({
                 )}
 
                 {section.code && (
-                  <div className="bg-black text-green-400 p-6 rounded-lg font-mono text-sm shadow-inner overflow-x-auto leading-relaxed whitespace-pre-wrap mt-5">
+                  <div className="code-container">
                     {section.codeLabel && (
                       <>
-                        <span className="text-pink-400 italic">
+                        <span className="code-label">
                           {section.codeLabel}
                         </span>
                         <br />
@@ -204,28 +201,25 @@ export default function ModuleContentPage({
                 )}
 
                 {section.cards && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+                  <div className="cards-grid">
                     {section.cards.map((card) => (
                       <div
                         key={card.title}
-                        className={[
-                          "relative overflow-hidden rounded-xl border p-5 shadow-sm",
-                          cardClasses(card.tone),
-                        ].join(" ")}
+                        className={`info-card ${cardClasses(card.tone)}`}
                       >
-                        <h4 className="font-bold mb-1">{card.title}</h4>
-                        <p className="text-sm opacity-90">{card.body}</p>
+                        <h4 className="info-card-title">{card.title}</h4>
+                        <p className="info-card-body">{card.body}</p>
                       </div>
                     ))}
                   </div>
                 )}
 
                 {section.videoUrl && (
-                  <div className="space-y-3 mt-5">
-                    <div className="mx-auto w-full max-w-3xl">
-                      <div className="aspect-video w-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                  <div className="video-container">
+                    <div className="video-player-wrapper">
+                      <div className="video-aspect">
                         <iframe
-                          className="w-full h-full"
+                          className="iframe-video"
                           src={normalizeVideoEmbedUrl(section.videoUrl)}
                           title={`${content.title} video`}
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -234,7 +228,7 @@ export default function ModuleContentPage({
                       </div>
                     </div>
                     <a
-                      className="inline-flex text-sm font-semibold text-gray-600 hover:text-black underline-offset-4 hover:underline"
+                      className="video-tab-link"
                       href={section.videoUrl}
                       target="_blank"
                       rel="noreferrer"
@@ -246,7 +240,7 @@ export default function ModuleContentPage({
                       onClick={() =>
                         markModuleVideoWatched(moduleId, section.heading || "Video")
                       }
-                      className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50"
+                      className="btn-watched"
                     >
                       Mark video as watched
                     </button>
@@ -254,21 +248,21 @@ export default function ModuleContentPage({
                 )}
 
                 {!section.videoUrl && section.id === "video" && section.body && (
-                  <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 mt-5">
-                    <p className="text-gray-700 leading-relaxed">{section.body}</p>
+                  <div className="fallback-video-box">
+                    <p className="section-body-text">{section.body}</p>
                   </div>
                 )}
 
                 {section.quizQuestion && (
-                  <div className="mt-5">
-                    <p className="mb-6 text-gray-700 font-medium">
+                  <div className="quiz-container">
+                    <p className="quiz-question-text">
                       {section.quizQuestion}
                     </p>
-                    <div className="space-y-3">
+                    <div className="quiz-options-list">
                       {(section.quizOptions || []).map((option) => (
                         <button
                           key={option}
-                          className="w-full text-left border border-gray-200 p-4 rounded-xl hover:bg-gray-50 hover:border-black transition-all font-medium"
+                          className="quiz-option-btn"
                         >
                           {option}
                         </button>

@@ -6,6 +6,7 @@ import {
   getDefaultCourseContent,
 } from "../../lib/course-content";
 import { markModuleLabStarted, useModuleLabSolved } from "../progress-state";
+import "./lab-list-page.css";
 
 export default function LabListPage({ moduleId }) {
   const fallbackContent = getDefaultCourseContent(moduleId);
@@ -42,25 +43,29 @@ export default function LabListPage({ moduleId }) {
     };
   }, [fallbackContent, moduleId]);
 
+  if (!content) {
+    return <div className="lab-list-container">Loading...</div>;
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-10 text-black md:px-10">
-      <div className="mx-auto max-w-5xl">
+    <div className="lab-list-container">
+      <div className="lab-list-wrapper">
         <Link
           href={`/learn/${moduleId}`}
-          className="mb-6 inline-block text-sm font-semibold text-gray-500 hover:text-black"
+          className="back-link"
         >
-          Back to {content.shortTitle}
+          &larr; Back to {content.shortTitle}
         </Link>
 
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-900">
+        <div className="lab-header-section">
+          <h1 className="lab-list-title">
             {content.shortTitle} Labs
           </h1>
-          <p className="mt-2 text-gray-500">{content.description}</p>
+          <p className="lab-list-subtitle">{content.description}</p>
         </div>
 
-        <div className="space-y-4">
-          {content.labs.map((lab) => (
+        <div className="labs-grid">
+          {(content.labs || []).map((lab) => (
             <LabListItem key={lab.id} moduleId={moduleId} lab={lab} />
           ))}
         </div>
@@ -76,22 +81,22 @@ function LabListItem({
   const solved = useModuleLabSolved(moduleId, lab.id);
 
   return (
-    <Link href={`/learn/${moduleId}/${lab.id}`} className="block">
-      <div className="flex min-h-[92px] items-center justify-between overflow-hidden rounded-lg border border-gray-200 bg-white transition-shadow hover:shadow-md">
-        <div className="min-w-0 px-5 py-4">
-          <span className="mb-2 inline-flex rounded bg-blue-100 px-2 py-1 text-xs font-bold text-blue-800">
+    <Link href={`/learn/${moduleId}/${lab.id}`} className="lab-item-link">
+      <div className="lab-item-card">
+        <div className="lab-item-info">
+          <span className="lab-badge">
             {lab.level}
           </span>
-          <h2 className="text-base font-semibold text-gray-800">
+          <h2 className="lab-title-text">
             {lab.title}
           </h2>
-          <p className="mt-1 text-sm text-gray-500">{lab.summary}</p>
+          <p className="lab-desc-text">{lab.summary}</p>
         </div>
 
-        <div className="pr-4">
+        <div className="lab-status-area">
           <span
-            className={`inline-flex rounded px-5 py-2 text-sm font-semibold ${
-              solved ? "bg-green-600 text-white" : "bg-gray-200 text-gray-700"
+            className={`lab-status-badge ${
+              solved ? "lab-status-solved" : "lab-status-unsolved"
             }`}
           >
             {solved ? "Solved" : "Not solved"}

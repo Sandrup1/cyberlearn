@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import "./navbar.css";
 import { clearUserProfile, getProfileInitials, useUserProfile } from "../lib/user-profile";
 
@@ -9,10 +8,8 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const profile = useUserProfile();
-  const pathname = usePathname();
 
   const initials = getProfileInitials(profile);
-  const isHome = pathname === "/dashboard" || pathname === "/";
 
   function handleLogout() {
     clearUserProfile();
@@ -36,13 +33,12 @@ export default function Navbar() {
 
   return (
     <div className="navbar">
-      <h2 className="navbar-title">{isHome ? "Home" : "Welcome"}</h2>
 
       <div className="navbar-right">
-        <Link href="/dashboard" className="navbar-link hover:bg-blue-500 rounded-lg">
+        <Link href="/dashboard" className="navbar-link">
           Home
         </Link>
-        <Link href="/learn" className="navbar-link hover:bg-blue-500 rounded-lg">
+        <Link href="/learn" className="navbar-link">
           Learn
         </Link>
 
@@ -82,6 +78,11 @@ export default function Navbar() {
               <Link href="/settings" className="dropdown-item">
                 Settings
               </Link>
+              {profile.role === "Admin" && (
+                <Link href="/admin" className="dropdown-item" style={{ fontWeight: "600", color: "#4f46e5" }} onClick={() => setOpen(false)}>
+                  ⚙️ Admin Panel
+                </Link>
+              )}
               <Link href="/login" className="dropdown-item logout" onClick={handleLogout}>
                 Logout
               </Link>

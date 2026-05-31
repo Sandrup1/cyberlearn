@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   saveModuleQuizLevelResult,
   useModuleQuizLevels,
 } from "../../learn/progress-state";
+import "../quiz.css";
 
 export default function QuizPage() {
   const params = useParams();
+  const router = useRouter();
   const levelProgress = useModuleQuizLevels(params.moduleId);
   const [quiz, setQuiz] = useState(null);
   const [activeLevelId, setActiveLevelId] = useState("easy");
@@ -135,57 +137,64 @@ export default function QuizPage() {
     }
   }
 
-  if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
-  if (!quiz || !activeLevel) return <p className="text-center mt-10">Loading...</p>;
+  if (error) return <p className="result-message-error" style={{ textAlign: "center", marginTop: "2.5rem" }}>{error}</p>;
+  if (!quiz || !activeLevel) return <p style={{ textAlign: "center", marginTop: "2.5rem" }}>Loading...</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 text-gray-900">
-      <div className="mx-auto max-w-5xl space-y-6">
-        <div className="rounded-2xl bg-white p-6 shadow-sm">
-          <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+    <div className="quiz-page-container">
+      <div className="quiz-wrapper">
+        <button
+          onClick={() => router.back()}
+          className="back-button"
+        >
+          <span aria-hidden="true">‹</span>
+          Back
+        </button>
+
+        <div className="quiz-header-card">
+          <p className="quiz-header-tag">
             Module Quiz
           </p>
-          <h1 className="mt-2 text-3xl font-bold text-gray-950">{quiz.title}</h1>
-          <p className="mt-2 text-gray-500">
+          <h1 className="quiz-header-title">{quiz.title}</h1>
+          <p className="quiz-header-desc">
             Each level has {activeLevel.questions.length} questions. Score at
             least {quiz.passScore}/10 ({Math.ceil((quiz.passScore / 10) * activeLevel.questions.length)} correct)
             to unlock the next level.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div className="quiz-levels-grid">
           {quiz.levels.map((level, levelIndex) => {
             const unlocked = isLevelUnlocked(levelIndex);
             const passed = Boolean(levelProgress[level.id]?.passed);
+
+            const levelClass = activeLevelId === level.id
+              ? "active"
+              : unlocked
+              ? "unlocked"
+              : "locked";
+
+            const tagClass = passed
+              ? "passed"
+              : unlocked
+              ? "unlocked"
+              : "locked";
 
             return (
               <button
                 key={level.id}
                 type="button"
                 onClick={() => selectLevel(level, levelIndex)}
-                className={`rounded-xl border p-4 text-left transition ${
-                  activeLevelId === level.id
-                    ? "border-blue-600 bg-blue-50"
-                    : unlocked
-                    ? "border-gray-200 bg-white hover:border-gray-400"
-                    : "border-gray-200 bg-gray-100 text-gray-400"
-                }`}
+                className={`level-select-btn ${levelClass}`}
+                disabled={!unlocked}
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold">{level.title}</span>
-                  <span
-                    className={`rounded-full px-2 py-1 text-xs font-bold ${
-                      passed
-                        ? "bg-green-600 text-white"
-                        : unlocked
-                        ? "bg-gray-200 text-gray-700"
-                        : "bg-gray-300 text-gray-500"
-                    }`}
-                  >
+                <div className="level-header-row">
+                  <span className="level-title">{level.title}</span>
+                  <span className={`status-tag ${tagClass}`}>
                     {passed ? "Passed" : unlocked ? "Unlocked" : "Locked"}
                   </span>
                 </div>
-                <p className="mt-2 text-sm text-gray-500">
+                <p className="level-desc-text">
                   {level.questions.length} questions
                 </p>
               </button>
@@ -193,70 +202,67 @@ export default function QuizPage() {
           })}
         </div>
 
-        <div className="rounded-2xl bg-white p-6 shadow-xl">
-          <div className="mb-6 flex flex-col gap-2 border-b border-gray-100 pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="quiz-main-card">
+          <div className="quiz-card-header">
             <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-gray-400">
+              <p className="quiz-card-header-tag">
                 Level {activeLevelIndex + 1}
               </p>
-              <h2 className="text-2xl font-bold text-gray-950">
+              <h2 className="quiz-card-header-title">
                 {activeLevel.title}
               </h2>
             </div>
-            <p className="text-sm font-semibold text-gray-500">
+            <p className="quiz-passing-score">
               Passing score: {quiz.passScore}/10
             </p>
           </div>
 
           {activeLevel.questions.map((q, index) => (
-            <div key={index} className="mb-6 rounded-xl border p-4">
-              <p className="mb-3 font-semibold">
+            <div key={index} className="question-box">
+              <p className="question-text">
                 {index + 1}. {q.question}
               </p>
 
-              {q.options.map((opt, i) => (
-                <label
-                  key={i}
-                  className={`mb-2 block cursor-pointer rounded-lg border p-3 ${
-                    (answers[index] ?? []).includes(i)
-                      ? "border-blue-500 bg-blue-100"
-                      : "hover:bg-gray-100"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    name={`q${index}`}
-                    className="mr-2"
-                    checked={(answers[index] ?? []).includes(i)}
-                    onChange={() => handleToggle(index, i)}
-                  />
-                  {opt}
-                </label>
-              ))}
+              {q.options.map((opt, i) => {
+                const checked = (answers[index] ?? []).includes(i);
+                return (
+                  <label
+                    key={i}
+                    className={`option-row ${checked ? "checked" : ""}`}
+                  >
+                    <input
+                      type="checkbox"
+                      name={`q${index}`}
+                      className="option-checkbox"
+                      checked={checked}
+                      onChange={() => handleToggle(index, i)}
+                    />
+                    {opt}
+                  </label>
+                );
+              })}
             </div>
           ))}
 
           {!submitted && (
             <button
               onClick={handleSubmit}
-              className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+              className="btn-submit"
             >
               Submit {activeLevel.title} Quiz
             </button>
           )}
 
           {submitted && result && (
-            <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-5 text-center">
+            <div className="result-box">
               <h2
-                className={`text-xl font-bold ${
-                  result.passed ? "text-green-600" : "text-red-600"
-                }`}
+                className={`result-score ${result.passed ? "success" : "failed"}`}
               >
                 Score: {result.score} / {result.total} ({result.scoreOutOfTen}/10)
               </h2>
 
               {!result.passed && (
-                <p className="mt-2 text-red-500">
+                <p className="result-message-error">
                   You need {result.passScore}/10 to unlock the next level. Try
                   this level again.
                 </p>
@@ -266,14 +272,14 @@ export default function QuizPage() {
                 <button
                   type="button"
                   onClick={goToNextLevel}
-                  className="mt-4 rounded-lg bg-black px-5 py-2.5 text-sm font-bold text-white hover:bg-gray-800"
+                  className="btn-next-level"
                 >
                   Go to Next Level
                 </button>
               )}
 
               {result.allLevelsPassed && (
-                <p className="mt-2 font-semibold text-blue-600">
+                <p className="all-complete-text">
                   All quiz levels complete. Good job!
                 </p>
               )}

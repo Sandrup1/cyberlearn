@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { defaultCourseContents } from "../../lib/course-content";
-
+import "../admin.css";
 
 function formatModuleTitle(moduleId) {
   const course = defaultCourseContents[moduleId];
@@ -32,6 +33,28 @@ function calcStats(scores) {
   const lowest = Math.min(...scores);
 
   return { latest, average, highest, lowest, attempts: scores.length };
+}
+
+const avatarColors = [
+  "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+  "linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)",
+  "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+  "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+  "linear-gradient(135deg, #ec4899 0%, #db2777 100%)",
+];
+
+function getAvatarStyle(name) {
+  const code = (name || "").split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return { background: avatarColors[code % avatarColors.length] };
+}
+
+function getInitials(name) {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return parts[0].slice(0, 2).toUpperCase();
 }
 
 export default function UsersPage() {
@@ -95,211 +118,271 @@ export default function UsersPage() {
   }, [performance]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold">Users</h1>
-
-      <ul className="mt-4">
-        {users.map((user) => (
-          <li
-            key={user._id?.toString() || user.email}
-            className="border p-2 mb-2 flex justify-between items-center"
-          >
-            <span>
-              Username: {user.name} - Email: {user.email}
-            </span>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => openPerformance(user)}
-                className="bg-gray-900 text-white px-3 py-1 rounded"
-              >
-                Performance
-              </button>
-
-              <button
-                onClick={() => deleteUser(user._id)}
-                className="bg-red-500 text-white px-3 py-1 rounded"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      {selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-4xl rounded-xl bg-white p-6 shadow-xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-bold text-gray-900">
-                  Performance: {selectedUser.name}
-                </h2>
-                <p className="text-sm text-gray-500">{selectedUser.email}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedUser(null);
-                  setPerformance(null);
-                  setPerformanceError("");
-                }}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50"
-              >
-                Close
-              </button>
-            </div>
-
-            <div className="mt-5">
-              {loadingPerformance && (
-                <p className="text-sm text-gray-500">Loading…</p>
-              )}
-              {performanceError && (
-                <p className="text-sm font-semibold text-red-600">{performanceError}</p>
-              )}
-
-              {!loadingPerformance && !performanceError && performance && (
-                <div className="space-y-6">
-                  {selectedModuleIds.map((moduleId) => {
-                    const modulePerf = performance[moduleId] || {};
-                    const quizLevels = modulePerf.quizzes?.levels || {};
-                    const overallQuizAttempts = modulePerf.quizzes?.overallAttempts || 0;
-                    const labsPerf = modulePerf.labs || {};
-                    const labs = defaultCourseContents[moduleId]?.labs || [];
-                    const levelIds = Object.keys(quizLevels).sort();
-
-                    return (
-                      <div key={moduleId} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-                        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-                          <div>
-                            <h3 className="text-base font-bold text-gray-900">
-                              {formatModuleTitle(moduleId)}
-                            </h3>
-                            <p className="text-xs text-gray-500">Module id: {moduleId}</p>
-                          </div>
-                          <div className="text-sm font-semibold text-gray-600">
-                            Quiz attempts: {overallQuizAttempts}
-                          </div>
-                        </div>
-
-                        <div className="mt-4 space-y-4">
-                          <section className="rounded-lg border border-gray-200 bg-white p-4">
-                            <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                              Quizzes
-                            </h4>
-
-                            {levelIds.length === 0 ? (
-                              <p className="mt-2 text-sm text-gray-500">No quiz attempts yet.</p>
-                            ) : (
-                              <div className="mt-3 space-y-3">
-                                {levelIds.map((levelId) => {
-                                  const scores =
-                                    quizLevels[levelId]?.attempts?.map((a) => a.scoreOutOfTen) || [];
-                                  const stats = calcStats(scores);
-
-                                  return (
-                                    <div
-                                      key={levelId}
-                                      className="rounded-lg border border-gray-200 bg-gray-50 p-4"
-                                    >
-                                      <div className="flex items-center justify-between">
-                                        <p className="text-sm font-bold text-gray-900">
-                                          Level: {levelId}
-                                        </p>
-                                        <span className="text-xs font-bold text-gray-500">
-                                          Attempts: {stats.attempts}
-                                        </span>
-                                      </div>
-
-                                      <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-gray-700">
-                                        <div>
-                                          <span className="text-gray-500">Latest:</span>{" "}
-                                          {formatScore(stats.latest)}
-                                        </div>
-                                        <div>
-                                          <span className="text-gray-500">Average:</span>{" "}
-                                          {formatScore(stats.average)}
-                                        </div>
-                                        <div>
-                                          <span className="text-gray-500">Highest:</span>{" "}
-                                          {formatScore(stats.highest)}
-                                        </div>
-                                        <div>
-                                          <span className="text-gray-500">Lowest:</span>{" "}
-                                          {formatScore(stats.lowest)}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </section>
-
-                          <section className="rounded-lg border border-gray-200 bg-white p-4">
-                            <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                              Labs
-                            </h4>
-
-                            {labs.length === 0 ? (
-                              <p className="mt-2 text-sm text-gray-500">No labs configured.</p>
-                            ) : (
-                              <div className="mt-3 space-y-3">
-                                {labs.map((lab) => {
-                                  const perf = labsPerf[lab.id];
-                                  const attempts = perf?.attempts?.length || 0;
-                                  const completed = Boolean(perf?.completedAt);
-                                  const attempted = attempts > 0;
-                                  const status = completed
-                                    ? "Completed"
-                                    : attempted
-                                      ? "Attempted (not completed)"
-                                      : "Not attempted";
-
-                                  return (
-                                    <div
-                                      key={lab.id}
-                                      className="rounded-lg border border-gray-200 bg-gray-50 p-4"
-                                    >
-                                      <div className="flex items-start justify-between gap-3">
-                                        <div className="min-w-0">
-                                          <p className="text-sm font-bold text-gray-900">{lab.title}</p>
-                                          <p className="mt-1 text-xs text-gray-500">
-                                            Lab id: <span className="font-mono">{lab.id}</span>
-                                          </p>
-                                        </div>
-                                        <span
-                                          className={`rounded-full px-2 py-1 text-xs font-bold ${
-                                            completed
-                                              ? "bg-green-100 text-green-800"
-                                              : attempted
-                                                ? "bg-amber-100 text-amber-800"
-                                                : "bg-gray-200 text-gray-600"
-                                          }`}
-                                        >
-                                          {status}
-                                        </span>
-                                      </div>
-                                      <div className="mt-2 text-sm text-gray-700">
-                                        <span className="text-gray-500">Attempts:</span> {attempts}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </section>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+    <div className="admin-main">
+      <div className="admin-container">
+        
+        {/* Premium Header Card */}
+        <div className="admin-header-card">
+          <div className="admin-header-left">
+            <span className="admin-header-pre">Admin Panel</span>
+            <h1 className="admin-header-title">
+              User Management
+              <span className="badge-counter">{users.length}</span>
+            </h1>
+            <p className="admin-header-desc">
+              Monitor registered user accounts, view their course and quiz progress performance, or delete profiles from the training system.
+            </p>
+          </div>
+          <div>
+            <Link href="/admin" className="admin-btn secondary" style={{ gap: "0.5rem" }}>
+              ← Back to Admin
+            </Link>
           </div>
         </div>
-      )}
+
+        {/* User Table Grid */}
+        <div className="admin-table-wrapper">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th className="admin-th">User Profile</th>
+                <th className="admin-th">Email Address</th>
+                <th className="admin-th" style={{ textAlign: "right" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user._id?.toString() || user.email} className="admin-tr">
+                  <td className="admin-td">
+                    <div className="user-profile-flex">
+                      <div 
+                        className="user-avatar-circle" 
+                        style={getAvatarStyle(user.name)}
+                      >
+                        {getInitials(user.name)}
+                      </div>
+                      <div>
+                        <p className="user-name-title">{user.name}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="admin-td">
+                    <span style={{ fontFamily: "monospace", fontSize: "0.85rem", color: "#475569" }}>
+                      {user.email}
+                    </span>
+                  </td>
+                  <td className="admin-td" style={{ textAlign: "right" }}>
+                    <div className="admin-list-actions" style={{ justifyContent: "flex-end" }}>
+                      <button
+                        type="button"
+                        onClick={() => openPerformance(user)}
+                        className="admin-btn primary"
+                        style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
+                      >
+                        Performance
+                      </button>
+
+                      <button
+                        onClick={() => deleteUser(user._id)}
+                        className="admin-btn danger"
+                        style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {users.length === 0 && (
+                <tr>
+                  <td colSpan={3} className="admin-td" style={{ textAlign: "center", color: "#64748b", padding: "3rem 1.5rem" }}>
+                    No registered users found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Performance & Progress Modal */}
+        {selectedUser && (
+          <div className="admin-modal-backdrop">
+            <div className="admin-modal-content">
+              <div className="admin-modal-header">
+                <div>
+                  <h2 className="admin-modal-title">
+                    Performance Details
+                  </h2>
+                  <p className="admin-modal-subtitle">
+                    Learner: <strong>{selectedUser.name}</strong> ({selectedUser.email})
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedUser(null);
+                    setPerformance(null);
+                    setPerformanceError("");
+                  }}
+                  className="admin-btn secondary"
+                  style={{ padding: "0.5rem 1rem" }}
+                >
+                  ✕ Close
+                </button>
+              </div>
+
+              <div className="admin-modal-body">
+                {loadingPerformance && (
+                  <div style={{ padding: "3rem 0", textAlign: "center", color: "#64748b" }}>
+                    <span style={{ fontSize: "1.1rem", fontWeight: 600 }}>Loading progress metrics...</span>
+                  </div>
+                )}
+                {performanceError && (
+                  <p className="xss-error-text" style={{ padding: "1rem", backgroundColor: "#fef2f2", border: "1px solid #fee2e2", borderRadius: "0.5rem" }}>
+                    {performanceError}
+                  </p>
+                )}
+
+                {!loadingPerformance && !performanceError && performance && (
+                  <div className="perf-details-container">
+                    {selectedModuleIds.map((moduleId) => {
+                      const modulePerf = performance[moduleId] || {};
+                      const quizLevels = modulePerf.quizzes?.levels || {};
+                      const overallQuizAttempts = modulePerf.quizzes?.overallAttempts || 0;
+                      const labsPerf = modulePerf.labs || {};
+                      const labs = defaultCourseContents[moduleId]?.labs || [];
+                      const levelIds = Object.keys(quizLevels).sort();
+
+                      return (
+                        <div key={moduleId} className="perf-module-card">
+                          <div className="perf-module-header">
+                            <div>
+                              <h3 className="perf-module-title">
+                                {formatModuleTitle(moduleId)}
+                              </h3>
+                              <p className="perf-module-id">Module: {moduleId}</p>
+                            </div>
+                            <div className="perf-module-attempts">
+                              Total Quiz Attempts: {overallQuizAttempts}
+                            </div>
+                          </div>
+
+                          <div className="perf-sections-grid">
+                            {/* Quiz Stats */}
+                            <section className="perf-sub-card">
+                              <h4 className="perf-section-title">Quizzes</h4>
+
+                              {levelIds.length === 0 ? (
+                                <p style={{ margin: 0, fontSize: "0.875rem", color: "#64748b", fontStyle: "italic" }}>
+                                  No quiz attempts recorded.
+                                </p>
+                              ) : (
+                                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                                  {levelIds.map((levelId) => {
+                                    const scores =
+                                      quizLevels[levelId]?.attempts?.map((a) => a.scoreOutOfTen) || [];
+                                    const stats = calcStats(scores);
+
+                                    return (
+                                      <div
+                                        key={levelId}
+                                        style={{
+                                          backgroundColor: "#ffffff",
+                                          border: "1px solid #e2e8f0",
+                                          borderRadius: "0.5rem",
+                                          padding: "1rem"
+                                        }}
+                                      >
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                                          <p style={{ margin: 0, fontSize: "0.85rem", fontWeight: 800, color: "#1e293b" }}>
+                                            Level: {levelId}
+                                          </p>
+                                          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", backgroundColor: "#f1f5f9", padding: "0.15rem 0.5rem", borderRadius: "9999px" }}>
+                                            Attempts: {stats.attempts}
+                                          </span>
+                                        </div>
+
+                                        <div className="perf-stat-grid-2x2">
+                                          <div className="perf-stat-box">
+                                            <div className="perf-stat-val">{formatScore(stats.latest)}</div>
+                                            <div className="perf-stat-lbl">Latest</div>
+                                          </div>
+                                          <div className="perf-stat-box">
+                                            <div className="perf-stat-val">{formatScore(stats.average)}</div>
+                                            <div className="perf-stat-lbl">Average</div>
+                                          </div>
+                                          <div className="perf-stat-box">
+                                            <div className="perf-stat-val">{formatScore(stats.highest)}</div>
+                                            <div className="perf-stat-lbl">Highest</div>
+                                          </div>
+                                          <div className="perf-stat-box">
+                                            <div className="perf-stat-val">{formatScore(stats.lowest)}</div>
+                                            <div className="perf-stat-lbl">Lowest</div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </section>
+
+                            {/* Lab Statuses */}
+                            <section className="perf-sub-card">
+                              <h4 className="perf-section-title">Lab Simulator Labs</h4>
+
+                              {labs.length === 0 ? (
+                                <p style={{ margin: 0, fontSize: "0.875rem", color: "#64748b", fontStyle: "italic" }}>
+                                  No labs configured for this module.
+                                </p>
+                              ) : (
+                                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                                  {labs.map((lab) => {
+                                    const perf = labsPerf[lab.id];
+                                    const attempts = perf?.attempts?.length || 0;
+                                    const completed = Boolean(perf?.completedAt);
+                                    const attempted = attempts > 0;
+                                    const status = completed
+                                      ? "Completed"
+                                      : attempted
+                                        ? "Attempted"
+                                        : "Unattempted";
+
+                                    return (
+                                      <div key={lab.id} className="perf-item-row">
+                                        <div style={{ minWidth: 0 }}>
+                                          <p style={{ margin: 0, fontSize: "0.85rem", fontWeight: 700, color: "#1e293b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                            {lab.title}
+                                          </p>
+                                          <p style={{ margin: "0.15rem 0 0 0", fontSize: "0.7rem", color: "#64748b", fontFamily: "monospace" }}>
+                                            ID: {lab.id}
+                                          </p>
+                                        </div>
+                                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
+                                          <span className={`status-badge-inline ${status.toLowerCase()}`}>
+                                            {status}
+                                          </span>
+                                          <span style={{ fontSize: "0.75rem", color: "#64748b" }}>
+                                            ({attempts} tries)
+                                          </span>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </section>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

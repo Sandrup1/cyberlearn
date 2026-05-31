@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useUserProfile } from "../lib/user-profile";
+import "./sidebar.css";
 
 export default function Sidebar() {
+  const profile = useUserProfile();
   const [modulesOpen, setModulesOpen] = useState(false);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -44,18 +47,26 @@ export default function Sidebar() {
   }, [courses]);
 
   return (
-    <div className="w-64 bg-white shadow-sm p-6">
-      <h1 className="text-lg font-semibold mb-10 text-gray-900">CyberLearn AI</h1>
+    <div className="sidebar">
+      <h1 className="sidebar-brand">CyberLearn AI</h1>
 
-      <div className="space-y-4">
-        <Link href="/dashboard">
-          <div className="hover:bg-gray-500 text-black p-3 rounded-lg font-medium cursor-pointer">
+      <div className="sidebar-menu">
+        <Link href="/dashboard" className="sidebar-link">
+          <div className="sidebar-link-btn primary">
             📊 Dashboard
           </div>
         </Link>
 
-        <Link href="/performance-insights">
-          <div className="p-3 rounded-lg text-gray-600 cursor-pointer hover:bg-gray-500 font-medium">
+        {profile.role === "Admin" && (
+          <Link href="/admin" className="sidebar-link">
+            <div className="sidebar-link-btn" style={{ background: "linear-gradient(135deg, #1e1b4b 0%, #311042 100%)", color: "white" }}>
+              ⚙️ Admin Panel
+            </div>
+          </Link>
+        )}
+
+        <Link href="/performance-insights" className="sidebar-link">
+          <div className="sidebar-link-btn secondary">
             🧠 Performance Insights
           </div>
         </Link>
@@ -64,28 +75,28 @@ export default function Sidebar() {
           <button
             type="button"
             onClick={() => setModulesOpen((open) => !open)}
-            className="w-full p-3 rounded-lg text-gray-600 cursor-pointer hover:bg-gray-500 text-left font-medium"
+            className="sidebar-collapse-btn"
           >
             View all modules {modulesOpen ? "▴" : "▾"}
           </button>
 
           {modulesOpen && (
-            <div className="mt-2 space-y-1 rounded-lg border border-gray-200 bg-gray-50 p-2">
+            <div className="modules-list">
               {loading && (
-                <div className="px-2 py-1 text-xs font-semibold text-gray-500">
+                <div className="loading-text">
                   Loading…
                 </div>
               )}
 
               {!loading && courseLinks.length === 0 && (
-                <div className="px-2 py-1 text-xs font-semibold text-gray-500">
+                <div className="empty-text">
                   No modules available.
                 </div>
               )}
 
               {courseLinks.map((course) => (
-                <Link key={course.moduleId} href={course.href}>
-                  <div className="rounded-md px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-white hover:text-gray-900">
+                <Link key={course.moduleId} href={course.href} className="sidebar-link">
+                  <div className="module-link-item">
                     {course.label}
                   </div>
                 </Link>

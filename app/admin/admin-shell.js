@@ -2,14 +2,15 @@
 
 import AdminSidebar from "./components/admin-sidebar";
 import AdminTopbar from "./components/admin-topbar";
+import "./admin-shell.css";
 
 export default function AdminShell({ children }) {
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="admin-shell-container">
       <AdminSidebar />
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="admin-main-wrapper">
         <AdminTopbar />
-        <div className="flex-1 min-w-0">{children}</div>
+        <div className="admin-content-area">{children}</div>
       </div>
     </div>
   );

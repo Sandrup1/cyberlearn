@@ -11,6 +11,7 @@ import {
 } from "../learn/progress-state";
 import { getDefaultCourseContent } from "../lib/course-content";
 import { useMemo, useState } from "react";
+import "./dashboard.css";
 
 const dashboardModuleIds = ["sqli", "xss", "csrf", "xxe"];
 
@@ -186,52 +187,52 @@ export default function Dashboard() {
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="dashboard-container">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="main-wrapper">
         <Navbar />
 
-        <main className="p-8 space-y-6 w-full">
-          <div className="bg-white p-8 rounded-xl shadow-sm w-full">
-            <div className="flex justify-between items-end mb-4">
+        <main className="dashboard-main">
+          <div className="card">
+            <div className="card-header">
               <div>
-                <h3 className="font-bold text-gray-800 text-xl">Overall Progress</h3>
-                <p className="text-gray-500 text-sm">
+                <h3 className="card-title">Overall Progress</h3>
+                <p className="card-subtitle">
                   You have completed {overallProgress.percent}% of the curriculum
                 </p>
               </div>
-              <span className="text-indigo-600 font-bold text-lg">
+              <span className="progress-tasks">
                 {overallProgress.completedItems} / {overallProgress.totalItems} Tasks
               </span>
             </div>
-            <div className="w-full bg-gray-200 h-5 rounded-full overflow-hidden">
+            <div className="progress-bar-bg">
               <div
-                className="bg-indigo-600 h-full rounded-full transition-all duration-500"
+                className="progress-bar-fill"
                 style={{ width: `${overallProgress.percent}%` }}
               />
             </div>
-            <p className="mt-3 text-sm text-gray-500">
+            <p className="modules-completed-status">
               {overallProgress.completedModules} / {overallProgress.totalModules} modules fully completed
             </p>
           </div>
 
-          <div className="bg-white p-8 rounded-xl shadow-sm w-full">
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="card">
+            <div className="recommendation-header">
               <div>
-                <h3 className="font-bold text-indigo-600 mb-1 text-lg">
+                <h3 className="recommendation-title">
                  Recommendation
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="recommendation-module">
                   Module:{" "}
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-bold-dark">
                     {selectedModuleTitle}
                   </span>
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-gray-500">
+              <div className="select-wrapper">
+                <span className="select-label">
                   View module
                 </span>
                 <select
@@ -239,7 +240,7 @@ export default function Dashboard() {
                   onChange={(event) => {
                     setUserSelectedModuleId(event.target.value);
                   }}
-                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+                  className="module-select"
                 >
                   {moduleDetails.map((detail) => (
                     <option key={detail.moduleId} value={detail.moduleId}>
@@ -250,26 +251,26 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="mt-5 flex flex-col gap-4">
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <h4 className="text-sm font-bold uppercase tracking-widest text-gray-400">
+            <div className="recommendation-content">
+              <div className="info-box">
+                <h4 className="info-box-header">
                   Recommendation
                 </h4>
-                <p className="mt-3 text-gray-700 text-base leading-relaxed">
+                <p className="info-box-text">
                   {insightMessage}
                 </p>
               </div>
 
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
-                <h4 className="text-sm font-bold uppercase tracking-widest text-gray-400">
+              <div className="info-box">
+                <h4 className="info-box-header">
                   Next actions
                 </h4>
-                <div className="mt-3 space-y-2">
+                <div className="actions-list">
                   {improvementItems.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="block rounded-lg bg-white px-4 py-3 text-sm font-semibold text-indigo-700 hover:bg-indigo-50"
+                      className="action-link"
                     >
                       {item.label}
                     </Link>
@@ -279,35 +280,33 @@ export default function Dashboard() {
             </div>
           </div>
 
-
-
-          <div className="bg-white p-8 rounded-xl shadow-sm w-full flex items-center justify-between">
+          <div className="card continue-learning-card">
             <div>
-              <h3 className="font-bold text-gray-800 mb-1 text-lg">Continue Learning</h3>
-              <p className="text-gray-500 text-base">
+              <h3 className="card-title">Continue Learning</h3>
+              <p className="card-subtitle" style={{ fontSize: "1rem" }}>
                 Current Module:{" "}
-                <span className="text-gray-900 font-semibold">
+                <span className="text-bold-dark">
                   {activeCourse?.shortTitle || activeCourse?.title || "Start Learning"}
                 </span>
               </p>
             </div>
             <Link
               href={activeModule ? `/learn/${activeModule.moduleId}` : "/learn"}
-              className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-indigo-200"
+              className="primary-button"
             >
               {activeModule?.startedAt ? "Resume Module" : "Start Module"}
             </Link>
           </div>
 
-          <div className="bg-white p-8 rounded-xl shadow-sm w-full">
-            <h3 className="font-bold text-gray-800 mb-1 text-lg">Recent Activity</h3>
-            <p className="text-gray-500 text-sm">
+          <div className="card">
+            <h3 className="card-title">Recent Activity</h3>
+            <p className="card-subtitle">
               Your latest actions across quizzes, labs, and videos.
             </p>
 
-            <div className="mt-5 space-y-3">
+            <div className="activity-list">
               {recentActivity.length === 0 ? (
-                <p className="text-sm text-gray-500">No recent activity yet.</p>
+                <p className="card-subtitle">No recent activity yet.</p>
               ) : (
                 recentActivity.map((item) => {
                   const moduleTitle = formatModuleTitle(item.moduleId);
@@ -325,11 +324,11 @@ export default function Dashboard() {
                   return (
                     <div
                       key={item.id}
-                      className="flex items-start justify-between gap-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3"
+                      className="activity-item"
                     >
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-gray-800">{message}</p>
-                        <p className="mt-1 text-xs text-gray-500">{when}</p>
+                      <div className="activity-text-wrapper">
+                        <p className="activity-message">{message}</p>
+                        <p className="activity-time">{when}</p>
                       </div>
                     </div>
                   );

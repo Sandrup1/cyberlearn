@@ -8,6 +8,7 @@ import {
   saveUserProfile,
   useUserProfile,
 } from "../lib/user-profile";
+import "./settings.css";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -73,23 +74,23 @@ export default function SettingsPage() {
   ].join("|");
 
   return (
-    <main className="min-h-screen bg-gray-100 px-6 py-8 text-gray-900">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <main className="settings-main">
+      <div className="settings-container">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm font-semibold text-gray-500 transition-colors hover:text-gray-900"
+          className="back-button"
         >
           <span aria-hidden="true">‹</span>
           Back
         </button>
 
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="settings-header">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
+            <p className="settings-header-tag">
               Preferences
             </p>
-            <h1 className="mt-2 text-3xl font-bold text-gray-950">Settings</h1>
-            <p className="mt-1 max-w-2xl text-gray-500">
+            <h1 className="settings-header-title">Settings</h1>
+            <p className="settings-header-desc">
               Keep your CyberLearn profile, notifications, and account security
               current.
             </p>
@@ -97,18 +98,18 @@ export default function SettingsPage() {
 
           <Link
             href="/profile"
-            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-800 transition hover:bg-gray-50"
+            className="btn-secondary"
           >
             View Profile
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
-          <div className="space-y-6">
-            <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-gray-950">Account</h2>
-                <p className="mt-1 text-sm text-gray-500">
+        <div className="settings-layout">
+          <div className="settings-pane">
+            <section className="settings-card">
+              <div className="settings-card-header">
+                <h2 className="settings-card-title">Account</h2>
+                <p className="settings-card-subtitle">
                   Update the information shown across your learning workspace.
                 </p>
               </div>
@@ -116,60 +117,60 @@ export default function SettingsPage() {
               <form
                 key={accountFormKey}
                 onSubmit={handleProfileSubmit}
-                className="space-y-5"
+                className="settings-form"
               >
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <label className="space-y-2">
-                    <span className="text-sm font-bold text-gray-700">
+                <div className="form-grid two-cols">
+                  <label className="form-label">
+                    <span className="form-label-text">
                       Full Name
                     </span>
                     <input
                       name="name"
                       type="text"
                       defaultValue={profile.name}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                      className="form-input"
                     />
                   </label>
 
-                  <label className="space-y-2">
-                    <span className="text-sm font-bold text-gray-700">Email</span>
+                  <label className="form-label">
+                    <span className="form-label-text">Email</span>
                     <input
                       name="email"
                       type="email"
                       defaultValue={profile.email}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                      className="form-input"
                     />
                   </label>
 
-                  <label className="space-y-2">
-                    <span className="text-sm font-bold text-gray-700">Title</span>
+                  <label className="form-label">
+                    <span className="form-label-text">Title</span>
                     <input
                       name="title"
                       type="text"
                       defaultValue={profile.title}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                      className="form-input"
                     />
                   </label>
 
-                  <label className="space-y-2">
-                    <span className="text-sm font-bold text-gray-700">
+                  <label className="form-label">
+                    <span className="form-label-text">
                       Organization
                     </span>
                     <input
                       name="organization"
                       type="text"
                       defaultValue={profile.organization}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                      className="form-input"
                     />
                   </label>
                 </div>
 
-                <label className="block space-y-2">
-                  <span className="text-sm font-bold text-gray-700">Timezone</span>
+                <label className="form-label">
+                  <span className="form-label-text">Timezone</span>
                   <select
                     name="timezone"
                     defaultValue={profile.timezone}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    className="form-select"
                   >
                     <option value="Asia/Calcutta">Asia/Calcutta</option>
                     <option value="UTC">UTC</option>
@@ -179,11 +180,11 @@ export default function SettingsPage() {
                   </select>
                 </label>
 
-                <div className="flex flex-col gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-sm font-medium text-gray-500">{message}</p>
+                <div className="settings-card-footer">
+                  <p className="footer-message">{message}</p>
                   <button
                     type="submit"
-                    className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700"
+                    className="btn-primary"
                   >
                     Save Changes
                   </button>
@@ -191,16 +192,16 @@ export default function SettingsPage() {
               </form>
             </section>
 
-            <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-gray-950">Security</h2>
-                <p className="mt-1 text-sm text-gray-500">
+            <section className="settings-card">
+              <div className="settings-card-header">
+                <h2 className="settings-card-title">Security</h2>
+                <p className="settings-card-subtitle">
                   Maintain strong access controls for your account.
                 </p>
               </div>
 
-              <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <form onSubmit={handlePasswordSubmit} className="settings-form">
+                <div className="form-grid three-cols">
                   <input
                     type="password"
                     value={passwordForm.currentPassword}
@@ -211,7 +212,7 @@ export default function SettingsPage() {
                         currentPassword: event.target.value,
                       }))
                     }
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-gray-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    className="form-input"
                   />
                   <input
                     type="password"
@@ -223,7 +224,7 @@ export default function SettingsPage() {
                         newPassword: event.target.value,
                       }))
                     }
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-gray-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    className="form-input"
                   />
                   <input
                     type="password"
@@ -235,7 +236,7 @@ export default function SettingsPage() {
                         confirmPassword: event.target.value,
                       }))
                     }
-                    className="rounded-lg border border-gray-300 px-3 py-2 text-gray-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    className="form-input"
                   />
                 </div>
 
@@ -246,13 +247,13 @@ export default function SettingsPage() {
                   onChange={(checked) => handleToggle("twoFactorEnabled", checked)}
                 />
 
-                <div className="flex flex-col gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-sm font-medium text-gray-500">
+                <div className="settings-card-footer">
+                  <p className="footer-message">
                     {passwordMessage}
                   </p>
                   <button
                     type="submit"
-                    className="rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-gray-800"
+                    className="btn-dark"
                   >
                     Update Password
                   </button>
@@ -261,10 +262,10 @@ export default function SettingsPage() {
             </section>
           </div>
 
-          <aside className="space-y-6">
-            <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-950">Notifications</h2>
-              <div className="mt-5 space-y-4">
+          <aside className="settings-sidebar">
+            <section className="settings-card">
+              <h2 className="settings-card-title">Notifications</h2>
+              <div className="toggle-list">
                 <ToggleRow
                   title="Email updates"
                   description="Receive important account and course messages."
@@ -288,28 +289,28 @@ export default function SettingsPage() {
               </div>
             </section>
 
-            <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-950">Profile Photo</h2>
-              <p className="mt-2 text-sm text-gray-500">
+            <section className="settings-card">
+              <h2 className="settings-card-title">Profile Photo</h2>
+              <p className="settings-card-subtitle" style={{ marginTop: "0.5rem" }}>
                 Your photo is managed from your profile page.
               </p>
               <Link
                 href="/profile"
-                className="mt-5 inline-flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-bold text-gray-800 transition hover:bg-gray-50"
+                className="sidebar-btn-secondary"
               >
                 Manage Photo
               </Link>
             </section>
 
-            <section className="rounded-lg border border-red-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-red-700">Account Controls</h2>
-              <p className="mt-2 text-sm text-gray-500">
+            <section className="settings-card" style={{ borderColor: "#fca5a5" }}>
+              <h2 className="settings-card-title danger">Account Controls</h2>
+              <p className="settings-card-subtitle" style={{ marginTop: "0.5rem" }}>
                 Reset locally saved profile, photo, and preferences on this device.
               </p>
               <button
                 type="button"
                 onClick={handleResetProfile}
-                className="mt-5 w-full rounded-lg border border-red-200 px-4 py-2 text-sm font-bold text-red-600 transition hover:bg-red-50"
+                className="btn-danger-outline"
               >
                 Reset Local Profile
               </button>
@@ -328,16 +329,16 @@ function ToggleRow({
   onChange,
 }) {
   return (
-    <label className="flex items-center justify-between gap-4 rounded-lg border border-gray-100 p-4">
-      <span>
-        <span className="block text-sm font-bold text-gray-900">{title}</span>
-        <span className="mt-1 block text-sm text-gray-500">{description}</span>
+    <label className="toggle-row">
+      <span className="toggle-text">
+        <span className="toggle-title">{title}</span>
+        <span className="toggle-desc">{description}</span>
       </span>
       <input
         type="checkbox"
         checked={checked}
         onChange={(event) => onChange(event.target.checked)}
-        className="h-5 w-5 shrink-0 accent-blue-600"
+        className="toggle-checkbox"
       />
     </label>
   );

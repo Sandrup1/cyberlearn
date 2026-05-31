@@ -1,5 +1,7 @@
 "use client";
+
 import { useState } from "react";
+import "./login.css";
 
 export default function LabLoginBypass() {
   const [username, setUsername] = useState("");
@@ -20,26 +22,24 @@ export default function LabLoginBypass() {
   };
 
   return (
-    <div className="bg-white min-h-screen p-8 flex justify-center text-black">
-      <div className="max-w-5xl w-full border border-gray-200 rounded-xl p-12">
+    <div className="login-lab-container">
+      <div className="login-lab-card">
 
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold mb-6 leading-tight">
+        <div className="login-lab-header">
+          <h1 className="login-lab-title">
             SQL injection vulnerability allowing login bypass
           </h1>
 
           {/* Status */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="border-2 border-black px-4 py-1 text-xs font-black uppercase">
+          <div className="login-lab-status-row">
+            <div className="login-lab-badge">
               LAB
             </div>
 
             <div
-              className={`px-3 py-1 text-xs font-bold uppercase border ${
-                solved
-                  ? "border-black text-black"
-                  : "border-gray-300 text-gray-400"
+              className={`login-lab-solved-indicator ${
+                solved ? "solved" : "unsolved"
               }`}
             >
               {solved ? "Solved" : "Not solved"}
@@ -47,14 +47,14 @@ export default function LabLoginBypass() {
           </div>
 
           {/* Description */}
-          <div className="text-gray-800 text-lg leading-relaxed space-y-4 mb-10">
+          <div className="login-lab-description">
             <p>
               This lab contains a SQL injection vulnerability in the login
               function.
             </p>
             <p>
               To solve the lab, log in as the{" "}
-              <span className="font-mono bg-gray-100 px-2 py-1 border border-gray-200">
+              <span className="login-lab-code-inline">
                 administrator
               </span>{" "}
               user without knowing the password.
@@ -63,31 +63,29 @@ export default function LabLoginBypass() {
         </div>
 
         {/* Login Box */}
-        <div className="max-w-xl bg-gray-50 border border-gray-200 p-8">
+        <div className="login-form-box">
+          <h2 className="login-form-title">Login</h2>
 
-          <h2 className="text-2xl font-bold mb-6">Login</h2>
-
-          <form onSubmit={handleLogin} className="flex flex-col gap-5">
-
+          <form onSubmit={handleLogin} className="login-form-fields">
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="login-field-label">
                 Username
               </label>
               <input
                 type="text"
-                className="w-full border border-black p-3 focus:outline-none"
+                className="login-field-input"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="login-field-label">
                 Password
               </label>
               <input
                 type="password"
-                className="w-full border border-black p-3 focus:outline-none"
+                className="login-field-input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -95,7 +93,7 @@ export default function LabLoginBypass() {
 
             <button
               type="submit"
-              className="bg-black text-white py-3 font-bold hover:bg-gray-800 transition active:scale-95"
+              className="login-submit-btn"
             >
               Log in
             </button>
@@ -103,14 +101,14 @@ export default function LabLoginBypass() {
 
           {/* Message */}
           {message && (
-            <p className="mt-6 font-bold text-sm">
+            <p className="login-status-message">
               {message}
             </p>
           )}
         </div>
 
         {/* Footer */}
-        <div className="mt-16 border-t border-gray-100 pt-6 text-[10px] font-bold text-gray-300 uppercase tracking-[0.3em]">
+        <div className="login-lab-footer">
           CyberLearn // SQLi Lab
         </div>
 

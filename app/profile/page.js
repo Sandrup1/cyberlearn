@@ -8,6 +8,7 @@ import {
   saveUserProfile,
   useUserProfile,
 } from "../lib/user-profile";
+import "./profile.css";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -51,39 +52,39 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 px-6 py-8 text-gray-900">
-      <div className="mx-auto max-w-5xl space-y-6">
+    <main className="profile-main">
+      <div className="profile-container">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm font-semibold text-gray-500 transition-colors hover:text-gray-900"
+          className="back-button"
         >
           <span aria-hidden="true">‹</span>
           Back
         </button>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="profile-header">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
+            <p className="profile-header-tag">
               Account
             </p>
-            <h1 className="mt-2 text-3xl font-bold text-gray-950">Profile</h1>
-            <p className="mt-1 text-gray-500">
+            <h1 className="profile-header-title">Profile</h1>
+            <p className="profile-header-desc">
               Manage your identity and learning account information.
             </p>
           </div>
 
           <Link
             href="/settings"
-            className="inline-flex items-center justify-center rounded-lg bg-gray-950 px-4 py-2 text-sm font-bold text-white transition hover:bg-gray-800"
+            className="btn-dark"
           >
             Edit Settings
           </Link>
         </div>
 
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center">
+        <section className="profile-card">
+          <div className="profile-card-body">
             <div
-              className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-blue-600 bg-cover bg-center text-3xl font-bold text-white ring-4 ring-blue-50"
+              className="avatar-upload-trigger"
               style={
                 profile.photoDataUrl
                   ? { backgroundImage: `url(${profile.photoDataUrl})` }
@@ -94,22 +95,22 @@ export default function ProfilePage() {
               {!profile.photoDataUrl && initials}
             </div>
 
-            <div className="min-w-0 flex-1">
-              <h2 className="break-words text-2xl font-bold text-gray-950">
+            <div className="profile-info">
+              <h2 className="profile-name">
                 {profile.name}
               </h2>
-              <p className="break-words text-gray-500">{profile.email}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700">
+              <p className="profile-email">{profile.email}</p>
+              <div className="profile-badges">
+                <span className="badge badge-blue">
                   {profile.title}
                 </span>
-                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-700">
+                <span className="badge badge-emerald">
                   Active learner
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 sm:flex-row md:flex-col">
+            <div className="photo-actions">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -120,7 +121,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-bold text-gray-800 transition hover:bg-gray-50"
+                className="btn-upload"
               >
                 Upload Photo
               </button>
@@ -128,7 +129,7 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={removePhoto}
-                  className="rounded-lg border border-red-200 px-4 py-2 text-sm font-bold text-red-600 transition hover:bg-red-50"
+                  className="btn-remove"
                 >
                   Remove Photo
                 </button>
@@ -137,11 +138,11 @@ export default function ProfilePage() {
           </div>
 
           {photoMessage && (
-            <p className="mt-4 text-sm font-medium text-gray-500">{photoMessage}</p>
+            <p className="photo-message">{photoMessage}</p>
           )}
         </section>
 
-        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <section className="stats-grid">
           {[
             ["Full Name", profile.name],
             ["Email", profile.email],
@@ -152,12 +153,12 @@ export default function ProfilePage() {
           ].map(([label, value]) => (
             <div
               key={label}
-              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm"
+              className="stat-card"
             >
-              <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+              <p className="stat-label">
                 {label}
               </p>
-              <p className="mt-2 break-words text-lg font-bold text-gray-950">
+              <p className="stat-value">
                 {value}
               </p>
             </div>
@@ -167,3 +168,4 @@ export default function ProfilePage() {
     </main>
   );
 }
+

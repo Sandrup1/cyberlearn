@@ -2,62 +2,56 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import "../../components/lab-details.css";
 
 export default function LabPage() {
-
   const [solutionOpen, setSolutionOpen] = useState(true);
   const [communityOpen, setCommunityOpen] = useState(false);
 
   return (
-    <div className="bg-white min-h-screen p-8 flex justify-center text-black">
-
-      <div className="max-w-5xl w-full border border-gray-200 rounded-xl p-12">
+    <div className="lab-details-container">
+      <div className="lab-details-card">
 
         {/* Header */}
-        <div className="flex items-start justify-between">
+        <div className="lab-details-header no-border">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              {/* Title */}
+              <h1 className="lab-title" style={{ marginBottom: "1.5rem" }}>
+                SQL injection UNION attack, finding a column containing text
+              </h1>
 
-          <div>
+              {/* Status */}
+              <div className="status-row" style={{ marginBottom: "1.5rem" }}>
+                {/* Difficulty */}
+                <span className="difficulty-badge">
+                  Practitioner
+                </span>
 
-            {/* Title */}
-            <h1 className="text-4xl font-bold leading-tight mb-8">
-              SQL injection UNION attack, finding a column containing text
-            </h1>
-
-            {/* Status */}
-            <div className="flex items-center gap-4">
-
-              {/* Difficulty */}
-              <span className="text-[10px] font-bold border border-black px-2 py-1 uppercase">
-                Practitioner
-              </span>
-
-              {/* Solved */}
-              <div className="border-2 border-black px-4 py-1 text-xs font-black uppercase">
-                Lab • Solved
+                {/* Solved */}
+                <div className="status-badge">
+                  Lab • Solved
+                </div>
               </div>
-
             </div>
 
+            {/* Share */}
+            <button className="back-btn" style={{ border: "1px solid #000000", width: "3rem", height: "3rem", justifyContent: "center" }}>
+              ↗
+            </button>
           </div>
-
-          {/* Share */}
-          <button className="border border-black w-12 h-12 flex items-center justify-center hover:bg-black hover:text-white transition">
-            ↗
-          </button>
-
         </div>
 
         {/* Description */}
-        <div className="text-gray-800 text-lg leading-relaxed space-y-6 mt-12">
-
+        <div className="lab-desc-container">
           <p>
             This lab contains a SQL injection vulnerability in the product category
-            filter. The results from the query are returned in the application's
+            filter. The results from the query are returned in the application&apos;s
             response, so you can use a UNION attack to retrieve data from other tables.
             To construct such an attack, you first need to determine the number
             of columns returned by the query. You can do this using a technique
             you learned in a{" "}
-            <span className="underline cursor-pointer">
+            <span style={{ textDecoration: "underline", cursor: "pointer" }}>
               previous lab
             </span>.
             The next step is to identify a column that is compatible with string data.
@@ -70,118 +64,88 @@ export default function LabPage() {
             This technique helps you determine which columns are compatible with
             string data.
           </p>
-
         </div>
 
         {/* Button */}
-        <div className="mt-10">
-
+        <div style={{ marginTop: "2.5rem" }}>
           <Link href="/learn/sqli/lab3">
-
-            <button className="bg-black text-white px-10 py-4 font-bold text-lg hover:bg-gray-800 transition active:scale-95">
+            <button className="action-btn">
               ACCESS THE LAB →
             </button>
-
           </Link>
-
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-100 my-10"></div>
+        <div className="status-divider" style={{ margin: "2.5rem 0" }}></div>
 
         {/* Solution */}
-        <div className="border border-black">
+        <div className="accordion-container" style={{ marginTop: 0 }}>
+          <div className="accordion-item">
+            {/* Header */}
+            <button
+              onClick={() => setSolutionOpen(!solutionOpen)}
+              className="accordion-trigger"
+            >
+              <span>Solution Guide</span>
+              <span className={`accordion-arrow ${solutionOpen ? "open" : ""}`}>▼</span>
+            </button>
 
-          {/* Header */}
-          <button
-            onClick={() => setSolutionOpen(!solutionOpen)}
-            className="w-full p-5 flex justify-between items-center font-bold text-sm uppercase"
-          >
+            {/* Content */}
+            {solutionOpen && (
+              <div className="accordion-content">
+                <ol className="solution-steps">
+                  <li>
+                    Use Burp Suite to intercept and modify the request that sets
+                    the product category filter.
+                  </li>
 
-            <div className="flex items-center gap-3">
-              Solution
-            </div>
+                  <li>
+                    Determine the{" "}
+                    <span style={{ textDecoration: "underline" }}>
+                      number of columns that are being returned by the query
+                    </span>.
+                    Verify that the query is returning three columns, using the
+                    following payload in the{" "}
+                    <span className="inline-code">
+                      category
+                    </span>{" "}
+                    parameter:
 
-            <span className={`${solutionOpen ? "rotate-180" : ""}`}>
-              ▼
-            </span>
+                    <code className="code-box" style={{ display: "block", marginTop: "0.75rem" }}>
+                      &apos;+UNION+SELECT+NULL,NULL,NULL--
+                    </code>
+                  </li>
 
-          </button>
+                  <li>
+                    Try replacing each null with the random value provided by the
+                    lab, for example:
 
-          {/* Content */}
-          {solutionOpen && (
+                    <code className="code-box" style={{ display: "block", marginTop: "0.75rem" }}>
+                      &apos;+UNION+SELECT+&apos;abcdef&apos;,NULL,NULL--
+                    </code>
+                  </li>
 
-            <div className="p-8 border-t border-black text-gray-800">
+                  <li>
+                    If an error occurs, move on to the next null and try that instead.
+                  </li>
+                </ol>
+              </div>
+            )}
+          </div>
 
-              <ol className="list-decimal ml-6 space-y-8">
-
-                <li>
-                  Use Burp Suite to intercept and modify the request that sets
-                  the product category filter.
-                </li>
-
-                <li>
-                  Determine the{" "}
-                  <span className="underline">
-                    number of columns that are being returned by the query
-                  </span>.
-                  Verify that the query is returning three columns, using the
-                  following payload in the{" "}
-                  <span className="font-mono bg-gray-100 px-2 py-1 border border-gray-200">
-                    category
-                  </span>{" "}
-                  parameter:
-
-                  <code className="block bg-gray-100 border border-gray-300 p-4 mt-4 font-mono overflow-x-auto">
-                    '+UNION+SELECT+NULL,NULL,NULL--
-                  </code>
-
-                </li>
-
-                <li>
-                  Try replacing each null with the random value provided by the
-                  lab, for example:
-
-                  <code className="block bg-gray-100 border border-gray-300 p-4 mt-4 font-mono overflow-x-auto">
-                    '+UNION+SELECT+'abcdef',NULL,NULL--
-                  </code>
-
-                </li>
-
-                <li>
-                  If an error occurs, move on to the next null and try that instead.
-                </li>
-
-              </ol>
-
-            </div>
-
-          )}
-
-        </div>
-
-        {/* Community */}
-        <div className="border border-gray-200 mt-6">
-
-          <button
-            onClick={() => setCommunityOpen(!communityOpen)}
-            className="w-full p-5 flex justify-between items-center text-sm font-bold text-gray-500 uppercase"
-          >
-
-            <div>
-              Community Solutions
-            </div>
-
-            <span className={`${communityOpen ? "rotate-180" : ""}`}>
-              ▼
-            </span>
-
-          </button>
-
+          {/* Community */}
+          <div className="accordion-item gray-border">
+            <button
+              onClick={() => setCommunityOpen(!communityOpen)}
+              className="accordion-trigger gray-text"
+            >
+              <span>Community Solutions</span>
+              <span className={`accordion-arrow ${communityOpen ? "open" : ""}`}>▼</span>
+            </button>
+          </div>
         </div>
 
       </div>
-
     </div>
   );
 }

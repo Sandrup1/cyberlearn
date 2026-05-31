@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import "./admin-sidebar.css";
 
 function isActive(pathname, href) {
   if (href === "/admin") {
@@ -48,30 +49,25 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-72 shrink-0 border-r border-gray-200 bg-white">
-      <div className="px-6 py-6">
-        <div className="text-sm font-extrabold uppercase tracking-widest text-gray-900">
+    <aside className="admin-sidebar">
+      <div className="admin-sidebar-header">
+        <div className="admin-sidebar-brand">
           CyberLearn AI
         </div>
-        <div className="mt-1 text-xs font-semibold text-gray-500">
+        <div className="admin-sidebar-tag">
           Admin Panel
         </div>
       </div>
 
-      <nav className="px-3 pb-6">
-        <div className="space-y-1">
+      <nav className="admin-sidebar-nav">
+        <div className="admin-sidebar-list">
           {navItems.map((item) => {
             const active = item.match(pathname);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={[
-                  "block rounded-lg px-4 py-3 text-sm font-bold transition",
-                  active
-                    ? "bg-indigo-600 text-white shadow-sm"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                ].join(" ")}
+                className={`admin-sidebar-item ${active ? "active" : "inactive"}`}
                 aria-current={active ? "page" : undefined}
               >
                 {item.label}
@@ -83,4 +79,3 @@ export default function AdminSidebar() {
     </aside>
   );
 }
-

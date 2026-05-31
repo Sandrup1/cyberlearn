@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveUserProfile } from "../lib/user-profile";
+import styles from "./login.module.css";
 
 export default function Login() {
   const router = useRouter();
@@ -31,13 +32,19 @@ export default function Login() {
         saveUserProfile({
           name: data.user?.name || form.email.split("@")[0],
           email: data.user?.email || form.email,
+          role: data.user?.role,
+          title: data.user?.title,
           memberSince: data.user?.createdAt
             ? new Date(data.user.createdAt).getFullYear().toString()
             : undefined,
         });
 
         alert("Login successful!");
-        router.push("/dashboard");
+        if (data.user?.role === "Admin") {
+          router.push("/admin");
+        } else {
+          router.push("/dashboard");
+        }
       } else {
         alert(data.message || "Login failed");
       }
@@ -49,18 +56,18 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-10 rounded-xl shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>
           Login to CyberLearn
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className={styles.form}>
           <input
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="Email or Username"
             required
-            className="border p-3 rounded-md text-black"
+            className={styles.input}
             onChange={(e) =>
               setForm({
                 ...form,
@@ -73,7 +80,7 @@ export default function Login() {
             type="password"
             placeholder="Password"
             required
-            className="border p-3 rounded-md text-black"
+            className={styles.input}
             onChange={(e) =>
               setForm({
                 ...form,
@@ -84,17 +91,19 @@ export default function Login() {
 
           <button
             disabled={loading}
-            className={`text-white py-3 rounded-md transition ${
-              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            className={`${styles.button} ${
+              loading
+                ? styles.buttonDisabled
+                : styles.buttonActive
             }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="text-sm text-center mt-4 text-black">
+        <p className={styles.footer}>
           Don&apos;t have an account?{" "}
-          <a href="/signup" className="text-blue-600 font-semibold">
+          <a href="/signup" className={styles.link}>
             Sign up
           </a>
         </p>

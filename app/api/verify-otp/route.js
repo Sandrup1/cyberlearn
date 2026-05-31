@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import clientPromise from "../../lib/mongodb";
-import { consumeOtp, deleteOtpForEmail } from "@/lib/otp-store";
+import { consumeOtp, deleteOtpForEmail } from "../../../lib/otp-store";
 
 export async function POST(req) {
   try {

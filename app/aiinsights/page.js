@@ -11,7 +11,7 @@ export default function AIInsightsRedirect() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-10 text-gray-700">
+    <div style={{ minHeight: "100vh", backgroundColor: "#f3f4f6", padding: "2.5rem", color: "#374151" }}>
       Redirecting to Performance Insights…
     </div>
   );

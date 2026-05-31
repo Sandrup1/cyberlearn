@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import "../admin.css";
 
 const emptyLevel = (id, title) => ({
   id,
@@ -222,177 +224,182 @@ export default function AdminQuizzes() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto pb-32">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Manage Quizzes</h1>
-        <a href="/admin" className="text-blue-500 hover:underline">
-          &larr; Back to Admin Panel
-        </a>
-      </div>
-
-      {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
-      {success && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">{success}</div>}
-
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
-        <h2 className="text-xl font-semibold mb-6">Quiz Editor</h2>
-        
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium mb-1">Module ID</label>
-            <input 
-              type="text" 
-              value={formData.moduleId} 
-              onChange={e => setFormData({...formData, moduleId: e.target.value})}
-              className="w-full border p-2 rounded" 
-              placeholder="e.g. sqli, xss"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Title</label>
-            <input 
-              type="text" 
-              value={formData.title} 
-              onChange={e => setFormData({...formData, title: e.target.value})}
-              className="w-full border p-2 rounded" 
-              placeholder="e.g. SQL Injection Quiz"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Pass Score (out of 10)</label>
-            <input 
-              type="number" 
-              value={formData.passScore} 
-              onChange={e => setFormData({...formData, passScore: Number(e.target.value)})}
-              className="w-full border p-2 rounded" 
-              min="1" max="10"
-            />
-            <p className="mt-1 text-xs text-gray-500">
-              Passing threshold for each level (e.g. 6 = 60%).
-            </p>
-          </div>
+    <div className="admin-main">
+      <div className="admin-container narrow" style={{ paddingBottom: "8rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+          <h1 className="admin-card-title">Manage Quizzes</h1>
+          <Link href="/admin" className="header-brand-desc-link" style={{ fontSize: "0.875rem" }}>
+            &larr; Back to Admin Panel
+          </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium mb-1">Questions in {formData.levels[activeLevel].title}</label>
-            <input
-              type="number"
-              value={formData.levels[activeLevel].questions.length}
-              onChange={(e) => setActiveLevelQuestionCount(Number(e.target.value))}
-              className="w-full border p-2 rounded"
-              min="0"
-              max="100"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Options per Question ({formData.levels[activeLevel].title})</label>
-            <input
-              type="number"
-              value={optionsPerQuestion}
-              onChange={(e) => applyOptionsPerQuestionToActiveLevel(Number(e.target.value))}
-              className="w-full border p-2 rounded"
-              min="2"
-              max="10"
-            />
-          </div>
-        </div>
+        {error && <div className="result-message unsolved" style={{ marginBottom: "1rem" }}>{error}</div>}
+        {success && <div className="result-message solved" style={{ marginBottom: "1rem" }}>{success}</div>}
 
-        {/* Level Tabs */}
-        <div className="flex border-b mb-6">
-          {formData.levels.map((level, idx) => (
-            <button
-              key={level.id}
-              onClick={() => setActiveLevel(idx)}
-              className={`px-4 py-2 font-medium ${activeLevel === idx ? 'border-b-2 border-black text-black' : 'text-gray-500 hover:text-black'}`}
-            >
-              {level.title} ({level.questions.length})
-            </button>
-          ))}
-        </div>
-
-        {/* Questions for active level */}
-        <div className="space-y-6">
-          {formData.levels[activeLevel].questions.map((q, qIndex) => (
-            <div key={qIndex} className="p-4 border rounded-lg bg-gray-50">
-              <div className="flex justify-between items-start mb-4">
-                <h4 className="font-semibold">Question {qIndex + 1}</h4>
-                <button onClick={() => removeQuestion(qIndex)} className="text-red-500 text-sm hover:underline">Remove</button>
-              </div>
-              
-              <input
-                type="text"
-                value={q.question}
-                onChange={e => updateQuestion(qIndex, "question", e.target.value)}
-                placeholder="Question text"
-                className="w-full border p-2 rounded mb-4"
+        <div className="admin-card">
+          <h2 className="login-form-title">Quiz Editor</h2>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
+            <div className="admin-input-group">
+              <label className="admin-label">Module ID</label>
+              <input 
+                type="text" 
+                value={formData.moduleId} 
+                onChange={e => setFormData({...formData, moduleId: e.target.value})}
+                className="admin-input" 
+                placeholder="e.g. sqli, xss"
               />
-
-              <div className="space-y-2">
-                {q.options.map((opt, optIndex) => (
-                  <div key={optIndex} className="flex gap-2 items-center">
-                    <input
-                      type="checkbox"
-                      checked={Array.isArray(q.correctAnswers) && q.correctAnswers.includes(optIndex)}
-                      onChange={() => toggleCorrectOption(qIndex, optIndex)}
-                      className="w-4 h-4"
-                    />
-                    <input
-                      type="text"
-                      value={opt}
-                      onChange={e => updateQuestion(qIndex, "option", e.target.value, optIndex)}
-                      placeholder={`Option ${optIndex + 1}`}
-                      className="flex-1 border p-2 rounded text-sm"
-                    />
-                  </div>
-                ))}
-              </div>
             </div>
-          ))}
+            <div className="admin-input-group">
+              <label className="admin-label">Title</label>
+              <input 
+                type="text" 
+                value={formData.title} 
+                onChange={e => setFormData({...formData, title: e.target.value})}
+                className="admin-input" 
+                placeholder="e.g. SQL Injection Quiz"
+              />
+            </div>
+            <div className="admin-input-group">
+              <label className="admin-label">Pass Score (out of 10)</label>
+              <input 
+                type="number" 
+                value={formData.passScore} 
+                onChange={e => setFormData({...formData, passScore: Number(e.target.value)})}
+                className="admin-input" 
+                min="1" max="10"
+              />
+              <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6b7280" }}>
+                Passing threshold for each level (e.g. 6 = 60%).
+              </p>
+            </div>
+          </div>
 
-          <button onClick={addQuestion} className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 font-medium">
-            + Add Question to {formData.levels[activeLevel].title}
-          </button>
-        </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
+            <div className="admin-input-group">
+              <label className="admin-label">Questions in {formData.levels[activeLevel].title}</label>
+              <input
+                type="number"
+                value={formData.levels[activeLevel].questions.length}
+                onChange={(e) => setActiveLevelQuestionCount(Number(e.target.value))}
+                className="admin-input"
+                min="0"
+                max="100"
+              />
+            </div>
+            <div className="admin-input-group">
+              <label className="admin-label">Options per Question ({formData.levels[activeLevel].title})</label>
+              <input
+                type="number"
+                value={optionsPerQuestion}
+                onChange={(e) => applyOptionsPerQuestionToActiveLevel(Number(e.target.value))}
+                className="admin-input"
+                min="2"
+                max="10"
+              />
+            </div>
+          </div>
 
-        <div className="mt-8 pt-6 border-t flex justify-end gap-4">
-          <button onClick={() => setFormData(defaultQuiz())} className="px-6 py-2 text-gray-600 hover:bg-gray-100 rounded">
-            Clear Form
-          </button>
-          <button onClick={handleSave} disabled={isSaving} className="px-6 py-2 bg-black text-white rounded hover:bg-gray-800 disabled:opacity-50">
-            {isSaving ? "Saving..." : "Save Quiz"}
-          </button>
-        </div>
-      </div>
+          {/* Level Tabs */}
+          <div className="admin-tabs-nav">
+            {formData.levels.map((level, idx) => (
+              <button
+                key={level.id}
+                type="button"
+                onClick={() => setActiveLevel(idx)}
+                className={`admin-tab-btn ${activeLevel === idx ? 'active' : ''}`}
+              >
+                {level.title} ({level.questions.length})
+              </button>
+            ))}
+          </div>
 
-      <div>
-        <h2 className="text-lg font-semibold mb-4">Existing Quizzes</h2>
-        {loading ? (
-          <p className="text-gray-500">Loading quizzes...</p>
-        ) : quizzes.length === 0 ? (
-          <p className="text-gray-500">No quizzes found in the database.</p>
-        ) : (
-          <div className="grid gap-4">
-            {quizzes.map((quiz) => (
-              <div key={quiz._id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold text-lg">{quiz.title || quiz.moduleId}</h3>
-                  <p className="text-sm text-gray-500">
-                    Module ID: <span className="font-mono bg-gray-100 px-1 rounded">{quiz.moduleId}</span> • 
-                    Pass Score: 60%
-                  </p>
+          {/* Questions for active level */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            {formData.levels[activeLevel].questions.map((q, qIndex) => (
+              <div key={qIndex} className="admin-card-inner-box" style={{ margin: 0 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
+                  <h4 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>Question {qIndex + 1}</h4>
+                  <button type="button" onClick={() => removeQuestion(qIndex)} className="admin-btn danger-light" style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}>Remove</button>
                 </div>
-                <div className="flex gap-2">
-                  <button onClick={() => loadQuizIntoEditor(quiz)} className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium">
-                    Edit
-                  </button>
-                  <button onClick={() => handleDelete(quiz.moduleId)} className="px-3 py-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors text-sm font-medium">
-                    Delete
-                  </button>
+                
+                <input
+                  type="text"
+                  value={q.question}
+                  onChange={e => updateQuestion(qIndex, "question", e.target.value)}
+                  placeholder="Question text"
+                  className="admin-input"
+                  style={{ marginBottom: "1rem" }}
+                />
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  {q.options.map((opt, optIndex) => (
+                    <div key={optIndex} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                      <input
+                        type="checkbox"
+                        checked={Array.isArray(q.correctAnswers) && q.correctAnswers.includes(optIndex)}
+                        onChange={() => toggleCorrectOption(qIndex, optIndex)}
+                        style={{ height: "1rem", width: "1rem" }}
+                      />
+                      <input
+                        type="text"
+                        value={opt}
+                        onChange={e => updateQuestion(qIndex, "option", e.target.value, optIndex)}
+                        placeholder={`Option ${optIndex + 1}`}
+                        className="admin-input"
+                        style={{ fontSize: "0.875rem" }}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
+
+            <button type="button" onClick={addQuestion} className="admin-btn dashed">
+              + Add Question to {formData.levels[activeLevel].title}
+            </button>
           </div>
-        )}
+
+          <div style={{ marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid #e5e7eb", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+            <button type="button" onClick={() => setFormData(defaultQuiz())} className="admin-btn secondary">
+              Clear Form
+            </button>
+            <button type="button" onClick={handleSave} disabled={isSaving} className="admin-btn primary">
+              {isSaving ? "Saving..." : "Save Quiz"}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1rem" }}>Existing Quizzes</h2>
+          {loading ? (
+            <p style={{ color: "#6b7280" }}>Loading quizzes...</p>
+          ) : quizzes.length === 0 ? (
+            <p style={{ color: "#6b7280" }}>No quizzes found in the database.</p>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {quizzes.map((quiz) => (
+                <div key={quiz._id} className="admin-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.5rem", margin: 0 }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "1.125rem", fontWeight: 700 }}>{quiz.title || quiz.moduleId}</h3>
+                    <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.875rem", color: "#6b7280" }}>
+                      Module ID: <span style={{ fontFamily: "monospace", backgroundColor: "#f3f4f6", padding: "0.125rem 0.25rem", borderRadius: "0.25rem" }}>{quiz.moduleId}</span> • 
+                      Pass Score: 60%
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <button type="button" onClick={() => loadQuizIntoEditor(quiz)} className="admin-btn blue" style={{ padding: "0.5rem 1rem", fontSize: "0.875rem" }}>
+                      Edit
+                    </button>
+                    <button type="button" onClick={() => handleDelete(quiz.moduleId)} className="admin-btn danger" style={{ padding: "0.5rem 1rem", fontSize: "0.875rem" }}>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

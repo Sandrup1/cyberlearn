@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
+import "../../../components/shop.css";
 
 const products = [
   {
@@ -26,9 +28,9 @@ const products = [
   },
 ];
 
-export default function UnionLab() {
-
+function UnionLabInner() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const category =
     searchParams.get("category") ||
@@ -52,129 +54,97 @@ export default function UnionLab() {
 
   // Wrong UNION payload = Internal Server Error
   if (attemptedUnion && !solved) {
-
     return (
-      <div className="min-h-screen bg-[#f3f3f3] flex items-center justify-center text-black">
-
-        <div className="bg-white border border-gray-300 p-12 max-w-xl w-full text-center">
-
-          <h1 className="text-4xl font-bold mb-6">
+      <div className="server-error-container">
+        <div className="server-error-box">
+          <h1 className="server-error-title">
             Internal Server Error
           </h1>
-
-          <p className="text-gray-600 text-lg">
+          <p className="server-error-text">
             The UNION query returned an incorrect number of columns.
           </p>
-
         </div>
-
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f3f3] text-black">
-
+    <div className="shop-container bg-gray">
       {/* Header */}
-      <div className="bg-white border-b border-orange-500">
-
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between px-8 py-5">
-
+      <div className="shop-header border-orange">
+        <div className="max-w-[1200px] w-full mx-auto flex items-center justify-between px-8 py-5" style={{ padding: 0 }}>
           {/* Left */}
           <div>
-
-            <h2 className="text-[28px] leading-9 max-w-[900px] font-light">
+            <h2 className="header-title-text">
               SQL injection UNION attack, determining the number of columns returned by the query
             </h2>
 
-            <div className="flex items-center gap-4 mt-5">
-
-              <button className="bg-orange-500 text-white font-bold px-5 py-2 text-sm">
+            <div className="flex items-center gap-4 mt-5" style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+              <button 
+                onClick={() => router.push("/learn/sqli/lab3")}
+                className="header-back-btn-orange"
+              >
                 Back to lab home
               </button>
 
-              <span className="text-gray-400 text-sm">
-                Back to lab description »
+              <span className="header-desc-link-orange" style={{ cursor: "pointer" }} onClick={() => router.push("/learn/sqli/lab3")}>
+                Back to lab description &raquo;
               </span>
-
             </div>
-
           </div>
 
           {/* Status */}
-          <div className="border border-green-400 rounded-full flex overflow-hidden h-fit">
-
-            <div className="bg-green-400 px-4 py-2 text-sm font-bold uppercase">
+          <div className="header-status-badge-outline">
+            <div className="badge-label">
               Lab
             </div>
-
-            <div className="px-5 py-2 text-sm">
+            <div className="badge-val">
               {solved ? "Solved" : "Not solved"}
             </div>
-
           </div>
-
         </div>
-
       </div>
 
       {/* Main */}
-      <div className="max-w-[1200px] mx-auto px-8 py-10">
-
+      <div className="shop-main" style={{ maxWidth: "1200px", paddingLeft: "2rem", paddingRight: "2rem" }}>
         {/* Top Nav */}
-        <div className="flex justify-end gap-4 text-[#2f5da8] text-sm mb-16">
-
-          <Link href="#">
+        <div className="shop-top-nav">
+          <Link href="#" className="shop-top-nav-link">
             Home
           </Link>
-
           <span>|</span>
-
-          <Link href="#">
+          <Link href="#" className="shop-top-nav-link">
             My account
           </Link>
-
         </div>
 
         {/* Shop Logo */}
-        <div className="flex justify-center">
-
-          <div className="text-center">
-
-            <div className="text-gray-400 tracking-[10px] text-2xl mb-2">
-              WE LIKE TO
-            </div>
-
-            <div className="flex items-center justify-center gap-6">
-
-              <h1 className="text-[90px] font-bold text-[#2f5d85] leading-none">
-                SHOP
-              </h1>
-
-              <div className="text-[120px] text-[#2f5d85]">
-                ⌐
-              </div>
-
-            </div>
-
+        <div className="shop-logo-section">
+          <div className="shop-logo-subtitle">
+            WE LIKE TO
           </div>
-
+          <div className="shop-logo-title-wrap">
+            <h1 className="shop-logo-title blue-theme">
+              SHOP
+            </h1>
+            <div className="shop-logo-decor-char">
+              ⌐
+            </div>
+          </div>
         </div>
 
         {/* Category */}
-        <h1 className="text-center text-[64px] font-light mt-10 mb-14">
+        <h1 className="shop-page-title">
           {category}
         </h1>
 
         {/* Filters */}
-        <div className="bg-[#e7ebee] p-5 max-w-[950px] mx-auto">
-
-          <h3 className="font-bold text-gray-500 mb-4 text-xl">
+        <div className="refine-bar blue-border">
+          <h3 className="refine-label dark-gray">
             Refine your search:
           </h3>
 
-          <div className="flex flex-wrap gap-2">
-
+          <div className="refine-links-wrapper white-btn-theme">
             {[
               "All",
               "Clothing, shoes and accessories",
@@ -183,55 +153,49 @@ export default function UnionLab() {
               "Pets",
               "Toys & Games",
             ].map((item) => (
-
               <Link
                 key={item}
                 href={`?category=${encodeURIComponent(item)}`}
-                className="border border-gray-300 bg-white px-3 py-2 text-[#2f5da8] hover:bg-gray-100"
+                className="white-box-link"
               >
                 {item}
               </Link>
-
             ))}
-
           </div>
-
         </div>
 
         {/* Products */}
-        <div className="max-w-[950px] mx-auto mt-10">
-
+        <div className="union-list-container">
           {products.map((product) => (
-
             <div
               key={product.id}
-              className="grid grid-cols-[1fr_150px_150px] border-b border-gray-200 py-2 items-center"
+              className="union-list-row"
             >
-
-              <div className="text-[20px] font-semibold">
+              <div className="union-item-name">
                 {product.name}
               </div>
 
-              <div className="text-[20px] text-center">
+              <div className="union-item-price">
                 {product.price}
               </div>
 
-              <div className="flex justify-end">
-
-                <button className="bg-[#2f5d85] hover:bg-[#274f72] text-white px-6 py-2 font-bold">
+              <div className="union-btn-cell">
+                <button className="union-details-btn">
                   View details
                 </button>
-
               </div>
-
             </div>
-
           ))}
-
         </div>
-
       </div>
-
     </div>
+  );
+}
+
+export default function UnionLab() {
+  return (
+    <Suspense fallback={<div className="shop-container bg-gray" style={{ padding: "2rem", color: "#ccc" }}>Loading Shop...</div>}>
+      <UnionLabInner />
+    </Suspense>
   );
 }

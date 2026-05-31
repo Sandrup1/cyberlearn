@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import "../../../components/xss-lab.css";
 
 export default function StoredXSSLab() {
   const [comment, setComment] = useState("");
@@ -46,20 +47,19 @@ export default function StoredXSSLab() {
   };
 
   return (
-    <div className="bg-white min-h-screen text-black">
-
+    <div className="xss-lab-container">
       {/* Top Bar */}
-      <div className="border-b border-gray-200 p-4 flex justify-between items-center">
-        <h1 className="font-bold">Web Security Academy</h1>
+      <div className="xss-top-bar">
+        <h1 className="xss-top-bar-title">Web Security Academy</h1>
 
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-bold border border-black px-2 py-1 uppercase">
+        <div className="xss-top-bar-badge-area">
+          <span className="xss-lab-badge">
             LAB
           </span>
 
           <span
-            className={`text-xs font-bold px-3 py-1 border ${
-              solved ? "border-black text-black" : "border-gray-300 text-gray-400"
+            className={`xss-status-badge ${
+              solved ? "solved" : "unsolved"
             }`}
           >
             {solved ? "Solved" : "Not solved"}
@@ -69,44 +69,42 @@ export default function StoredXSSLab() {
 
       {/* Success Banner */}
       {solved && (
-        <div className="bg-black text-white text-center py-2 font-bold">
+        <div className="xss-success-banner">
           Congratulations, you solved the lab!
         </div>
       )}
 
       {/* Content */}
-      <div className="flex justify-center p-10">
-        <div className="max-w-3xl w-full">
-
+      <div className="xss-content-wrap">
+        <div className="xss-main-width">
           {/* Blog Image */}
-          <div className="mb-6 bg-gray-200 h-64 flex items-center justify-center">
-            <span className="text-gray-500">Blog Image</span>
+          <div className="xss-blog-img-placeholder">
+            <span className="xss-blog-img-text">Blog Image</span>
           </div>
 
           {/* Title */}
-          <h2 className="text-2xl font-bold mb-2">A Perfect World</h2>
-          <p className="text-sm text-gray-500 mb-6">
+          <h2 className="xss-blog-title">A Perfect World</h2>
+          <p className="xss-blog-meta">
             Fred Time | 08 April 2026
           </p>
 
           {/* Content */}
-          <p className="text-gray-700 text-sm mb-8 leading-relaxed">
+          <p className="xss-blog-text">
             As the fight against crime is failing miserably, experiments are being conducted...
           </p>
 
           {/* Comments */}
-          <h3 className="text-lg font-bold mb-4">Comments</h3>
+          <h3 className="xss-section-title">Comments</h3>
 
-          <div className="space-y-4 mb-10">
+          <div className="comments-list">
             {comments.map((c, index) => (
-              <div key={index} className="border border-gray-200 p-4">
-
+              <div key={index} className="comment-card">
                 {/* ⚠️ Stored XSS vulnerability */}
                 <div
                   dangerouslySetInnerHTML={{ __html: c.text }}
                 />
 
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="comment-author-meta">
                   — {c.name}
                 </p>
               </div>
@@ -114,13 +112,12 @@ export default function StoredXSSLab() {
           </div>
 
           {/* Comment Form */}
-          <h3 className="text-lg font-bold mb-4">Leave a comment</h3>
+          <h3 className="xss-section-title">Leave a comment</h3>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
+          <form onSubmit={handleSubmit} className="xss-form">
             <textarea
               placeholder="Comment"
-              className="border border-black p-3 h-32 focus:outline-none"
+              className="xss-textarea"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
@@ -128,7 +125,7 @@ export default function StoredXSSLab() {
             <input
               type="text"
               placeholder="Name"
-              className="border border-black p-3 focus:outline-none"
+              className="xss-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -136,7 +133,7 @@ export default function StoredXSSLab() {
             <input
               type="text"
               placeholder="Email"
-              className="border border-black p-3 focus:outline-none"
+              className="xss-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -144,26 +141,25 @@ export default function StoredXSSLab() {
             <input
               type="text"
               placeholder="Website"
-              className="border border-black p-3 focus:outline-none"
+              className="xss-input"
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
             />
 
             {/* Error Message */}
             {error && (
-              <p className="text-red-600 text-sm font-semibold">
+              <p className="xss-error-text">
                 {error}
               </p>
             )}
 
             <button
               type="submit"
-              className="bg-black text-white py-3 font-bold hover:bg-gray-800"
+              className="xss-submit-btn"
             >
               Post Comment
             </button>
           </form>
-
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import Navbar from "../components/navbar";
 import Link from "next/link";
 import { useModuleProgress } from "./progress-state";
 import { useEffect, useState } from "react";
+import "./learn.css";
 
 export default function Dashboard() {
 
@@ -31,23 +32,23 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="learn-container">
 
       <Sidebar />
 
       {/* Main */}
-      <div className="flex-1">
+      <div className="main-content">
 
         {/* Navbar */}
         <Navbar />
 
         {/* Content */}
-        <div className="p-10 grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="courses-grid">
 
           {loading ? (
-            <p className="text-gray-500">Loading courses...</p>
+            <p className="info-text">Loading courses...</p>
           ) : topics.length === 0 ? (
-            <p className="text-gray-500">No courses available.</p>
+            <p className="info-text">No courses available.</p>
           ) : (
             topics.map((item) => <ModuleCard key={item.id} item={item} />)
           )}
@@ -62,31 +63,31 @@ function ModuleCard({ item }) {
   const progress = useModuleProgress(item.id);
 
   return (
-    <Link href={item.link} className="block">
+    <Link href={item.link} className="card-link">
 
-      <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition cursor-pointer">
+      <div className="module-card">
 
-        <h2 className="font-semibold text-lg mb-2">
+        <h2 className="module-card-title">
           {item.title}
         </h2>
 
-        <p className="text-gray-600 text-sm mb-6">
+        <p className="module-card-desc">
           {item.desc}
         </p>
 
-        <div className="flex justify-between text-sm mb-2">
+        <div className="progress-header">
           <span>Progress</span>
           <span>{progress.percent}%</span>
         </div>
 
-        <div className="w-full bg-gray-200 h-2 rounded-full">
+        <div className="progress-bar-bg">
           <div
-            className="bg-black h-2 rounded-full transition-all"
+            className="progress-bar-fill"
             style={{ width: `${progress.percent}%` }}
           ></div>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-gray-500">
+        <div className="module-card-footer">
           <span>
             Quiz: {progress.quizCompleted ? "Complete" : "Incomplete"}
           </span>

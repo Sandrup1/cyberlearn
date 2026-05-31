@@ -9,6 +9,19 @@ export async function POST(req) {
       return Response.json({ message: "Missing fields" }, { status: 400 });
     }
 
+    // Hardcoded admin login
+    if (email.toLowerCase() === "admin@gmail.com" && password === "root") {
+      return Response.json({ 
+        message: "Login successful",
+        user: { 
+          name: "Administrator", 
+          email: "admin@gmail.com",
+          role: "Admin",
+          title: "System Administrator"
+        } 
+      }, { status: 200 });
+    }
+
     const client = await clientPromise;
     const db = client.db("cyberlearn");
 

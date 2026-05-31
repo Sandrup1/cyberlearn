@@ -6,6 +6,7 @@ import {
   defaultCourseContents,
   getDefaultCourseContent,
 } from "../../lib/course-content";
+import "../admin.css";
 
 function cloneContent(content) {
   return JSON.parse(JSON.stringify(content));
@@ -277,130 +278,134 @@ export default function AdminCourses() {
 
   if (!draft) {
     return (
-      <main className="min-h-screen bg-gray-100 p-10 text-gray-900">
-        <p className="font-semibold">No module content available.</p>
+      <main className="admin-main">
+        <p style={{ fontWeight: 600 }}>No module content available.</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 text-gray-900">
-      <div className="mx-auto max-w-7xl px-6 py-8">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
-              Admin
-            </p>
-            <h1 className="mt-2 text-3xl font-bold text-gray-950">
-              Manage Module Content
-            </h1>
-            <p className="mt-1 text-gray-500">
-              Edit module sections with a form UI. Learner pages use only{" "}
-              <span className="font-semibold">Published</span> content.
-            </p>
-          </div>
+    <main className="admin-main">
+      <div className="admin-container">
+        <div style={{ marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+            <div>
+              <p className="admin-card-pre">
+                Admin
+              </p>
+              <h1 className="admin-card-title" style={{ marginTop: "0.5rem" }}>
+                Manage Module Content
+              </h1>
+              <p className="admin-card-desc">
+                Edit module sections with a form UI. Learner pages use only{" "}
+                <strong>Published</strong> content.
+              </p>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href="/admin"
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
-            >
-              ← Back
-            </Link>
-            <button
-              type="button"
-              disabled={saving}
-              onClick={save}
-              className="rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-gray-800 disabled:opacity-50"
-            >
-              {saving ? "Saving…" : "Save"}
-            </button>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.75rem" }}>
+              <Link
+                href="/admin"
+                className="admin-btn secondary"
+              >
+                ← Back
+              </Link>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={save}
+                className="admin-btn primary"
+              >
+                {saving ? "Saving…" : "Save"}
+              </button>
+            </div>
           </div>
         </div>
 
         {status && (
-          <div className="mb-6 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm">
+          <div className="result-message solved" style={{ marginBottom: "1.5rem" }}>
             {status}
             {loadState === "loading" && (
-              <span className="ml-2 text-gray-400">(loading)</span>
+              <span style={{ marginLeft: "0.5rem", color: "#9ca3af" }}>(loading)</span>
             )}
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <aside className="lg:col-span-4">
-            <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-              <h2 className="text-lg font-bold text-gray-950">Modules</h2>
-              <p className="mt-1 text-sm text-gray-500">
+        <div className="admin-grid-12">
+          <aside className="lg-col-4">
+            <div className="admin-aside-card" style={{ marginBottom: "1.5rem" }}>
+              <h2 style={{ fontSize: "1.125rem", fontWeight: 700, margin: 0 }}>Modules</h2>
+              <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.875rem", color: "#6b7280" }}>
                 Choose a module to edit.
               </p>
 
-              <div className="mt-4 flex items-center gap-2">
+              <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 <button
                   type="button"
                   onClick={() => setCreateOpen((open) => !open)}
-                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50"
+                  className="admin-btn secondary"
+                  style={{ padding: "0.5rem 1rem", fontSize: "0.875rem" }}
                 >
                   {createOpen ? "Close" : "+ New module"}
                 </button>
               </div>
 
               {createOpen && (
-                <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                  <div className="grid grid-cols-1 gap-3">
-                    <label className="block space-y-1">
-                      <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                <div className="admin-card-inner-box" style={{ marginTop: "1rem" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                    <label className="admin-input-group">
+                      <span className="admin-label" style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "#6b7280" }}>
                         Module ID
                       </span>
                       <input
                         value={createModuleId}
                         onChange={(event) => setCreateModuleId(event.target.value)}
                         placeholder="e.g. idor"
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                        className="admin-input mono"
                       />
                     </label>
 
-                    <label className="block space-y-1">
-                      <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                    <label className="admin-input-group">
+                      <span className="admin-label" style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "#6b7280" }}>
                         Title
                       </span>
                       <input
                         value={createTitle}
                         onChange={(event) => setCreateTitle(event.target.value)}
                         placeholder="e.g. Insecure Direct Object References"
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                        className="admin-input"
                       />
                     </label>
 
-                    <label className="block space-y-1">
-                      <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                    <label className="admin-input-group">
+                      <span className="admin-label" style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "#6b7280" }}>
                         Short Title
                       </span>
                       <input
                         value={createShortTitle}
                         onChange={(event) => setCreateShortTitle(event.target.value)}
                         placeholder="e.g. IDOR"
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                        className="admin-input"
                       />
                     </label>
 
-                    <label className="block space-y-1">
-                      <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                    <label className="admin-input-group">
+                      <span className="admin-label" style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "#6b7280" }}>
                         Description
                       </span>
                       <textarea
                         value={createDescription}
                         onChange={(event) => setCreateDescription(event.target.value)}
                         rows={3}
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                        className="admin-textarea"
                       />
                     </label>
 
-                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                    <label className="admin-checkbox-label">
                       <input
                         type="checkbox"
                         checked={createPublished}
                         onChange={(event) => setCreatePublished(event.target.checked)}
+                        style={{ height: "1rem", width: "1rem" }}
                       />
                       Published (visible to learners)
                     </label>
@@ -409,7 +414,7 @@ export default function AdminCourses() {
                       type="button"
                       disabled={saving}
                       onClick={createModule}
-                      className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+                      className="admin-btn blue"
                     >
                       Create module
                     </button>
@@ -417,69 +422,63 @@ export default function AdminCourses() {
                 </div>
               )}
 
-              <div className="mt-4 space-y-2">
+              <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                 {moduleList.length === 0 ? (
-                  <p className="text-sm text-gray-500">No modules found.</p>
+                  <p style={{ margin: 0, fontSize: "0.875rem", color: "#6b7280" }}>No modules found.</p>
                 ) : (
                   moduleList.map((moduleId) => {
                     const content = contents[moduleId];
                     const selected = selectedModuleId === moduleId;
-                  return (
-                    <button
-                      key={moduleId}
-                      type="button"
-                      onClick={() => setSelectedModuleId(moduleId)}
-                      className={`w-full rounded-lg border px-4 py-3 text-left transition ${
-                        selected
-                          ? "border-blue-600 bg-blue-50"
-                          : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-bold text-gray-950">
-                            {content?.shortTitle || moduleId.toUpperCase()}
-                          </p>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {content?.description || "No description yet"}
-                          </p>
+                    return (
+                      <button
+                        key={moduleId}
+                        type="button"
+                        onClick={() => setSelectedModuleId(moduleId)}
+                        className={`admin-select-btn ${selected ? 'active' : ''}`}
+                      >
+                        <div className="admin-select-btn-header">
+                          <div>
+                            <p className="admin-select-btn-title">
+                              {content?.shortTitle || moduleId.toUpperCase()}
+                            </p>
+                            <p className="admin-select-btn-desc">
+                              {content?.description || "No description yet"}
+                            </p>
+                          </div>
+                          <span
+                            className={`admin-status-badge ${
+                              content?.published ? 'published' : 'draft'
+                            }`}
+                          >
+                            {content?.published ? "Published" : "Draft"}
+                          </span>
                         </div>
-                        <span
-                          className={`mt-0.5 rounded-full px-2 py-1 text-xs font-bold ${
-                            content?.published
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-200 text-gray-600"
-                          }`}
-                        >
-                          {content?.published ? "Published" : "Draft"}
-                        </span>
-                      </div>
-                      <div className="mt-2 flex items-center justify-between text-xs font-semibold text-gray-400">
-                        <span>{content?.sections?.length || 0} sections</span>
-                        <span className="font-mono">{moduleId}</span>
-                      </div>
-                    </button>
-                  );
+                        <div className="admin-select-btn-footer">
+                          <span>{content?.sections?.length || 0} sections</span>
+                          <span style={{ fontFamily: "monospace" }}>{moduleId}</span>
+                        </div>
+                      </button>
+                    );
                   })
                 )}
               </div>
             </div>
 
-            <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-              <h2 className="text-lg font-bold text-gray-950">Module Settings</h2>
+            <div className="admin-aside-card">
+              <h2 style={{ fontSize: "1.125rem", fontWeight: 700, margin: 0 }}>Module Settings</h2>
 
-              <div className="mt-4 space-y-4">
-                <label className="block space-y-2">
-                  <span className="text-sm font-bold text-gray-700">Title</span>
+              <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <label className="admin-input-group">
+                  <span className="admin-label">Title</span>
                   <input
                     value={draft.title}
                     onChange={(event) => updateDraft({ title: event.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    className="admin-input"
                   />
                 </label>
 
-                <label className="block space-y-2">
-                  <span className="text-sm font-bold text-gray-700">
+                <label className="admin-input-group">
+                  <span className="admin-label">
                     Short Title (sidebar)
                   </span>
                   <input
@@ -487,12 +486,12 @@ export default function AdminCourses() {
                     onChange={(event) =>
                       updateDraft({ shortTitle: event.target.value })
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    className="admin-input"
                   />
                 </label>
 
-                <label className="block space-y-2">
-                  <span className="text-sm font-bold text-gray-700">
+                <label className="admin-input-group">
+                  <span className="admin-label">
                     Description (dashboard card)
                   </span>
                   <textarea
@@ -501,36 +500,36 @@ export default function AdminCourses() {
                       updateDraft({ description: event.target.value })
                     }
                     rows={3}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    className="admin-textarea"
                   />
                 </label>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <label className="block space-y-2">
-                    <span className="text-sm font-bold text-gray-700">Lab Path</span>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                  <label className="admin-input-group">
+                    <span className="admin-label">Lab Path</span>
                     <input
                       value={draft.labPath}
                       onChange={(event) => updateDraft({ labPath: event.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                      className="admin-input mono"
                     />
                   </label>
 
-                  <label className="block space-y-2">
-                    <span className="text-sm font-bold text-gray-700">Quiz Path</span>
+                  <label className="admin-input-group">
+                    <span className="admin-label">Quiz Path</span>
                     <input
                       value={draft.quizPath}
                       onChange={(event) => updateDraft({ quizPath: event.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                      className="admin-input mono"
                     />
                   </label>
                 </div>
 
-                <label className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 p-4">
+                <label className="admin-checkbox-label" style={{ padding: "0.75rem", border: "1px solid #e5e7eb", borderRadius: "0.5rem", justifyContent: "space-between", backgroundColor: "#f9fafb" }}>
                   <span>
-                    <span className="block text-sm font-bold text-gray-900">
+                    <span style={{ display: "block", fontSize: "0.875rem", fontWeight: 700, color: "#111827" }}>
                       Published
                     </span>
-                    <span className="mt-1 block text-sm text-gray-500">
+                    <span style={{ display: "block", fontSize: "0.75rem", color: "#6b7280", marginTop: "0.25rem", fontWeight: 400 }}>
                       Public pages read published content.
                     </span>
                   </span>
@@ -538,13 +537,13 @@ export default function AdminCourses() {
                     type="checkbox"
                     checked={draft.published}
                     onChange={(event) => updateDraft({ published: event.target.checked })}
-                    className="h-5 w-5 accent-blue-600"
+                    style={{ height: "1.25rem", width: "1.25rem" }}
                   />
                 </label>
 
-                <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600">
+                <div style={{ fontSize: "0.875rem", color: "#4b5563", border: "1px solid #e5e7eb", borderRadius: "0.5rem", padding: "0.75rem", backgroundColor: "#ffffff" }}>
                   Labs are edited in{" "}
-                  <Link href="/admin/labs" className="font-semibold text-blue-600 hover:underline">
+                  <Link href="/admin/labs" style={{ fontWeight: 700, color: "#2563eb", textDecoration: "none" }}>
                     Manage Theory & Labs
                   </Link>
                   .
@@ -553,12 +552,12 @@ export default function AdminCourses() {
             </div>
           </aside>
 
-          <section className="lg:col-span-8">
-            <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <section className="lg-col-8">
+            <div className="admin-aside-card" style={{ padding: "1.5rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                 <div>
-                  <h2 className="text-lg font-bold text-gray-950">Sections</h2>
-                  <p className="mt-1 text-sm text-gray-500">
+                  <h2 style={{ fontSize: "1.125rem", fontWeight: 700, margin: 0 }}>Sections</h2>
+                  <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.875rem", color: "#6b7280" }}>
                     Build the left sidebar and main content.
                   </p>
                 </div>
@@ -566,15 +565,16 @@ export default function AdminCourses() {
                 <button
                   type="button"
                   onClick={addSection}
-                  className="rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50"
+                  className="admin-btn dashed"
+                  style={{ borderStyle: "dashed", width: "auto", padding: "0.5rem 1rem" }}
                 >
                   + Add Section
                 </button>
               </div>
 
-              <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-12">
-                <div className="lg:col-span-5">
-                  <div className="space-y-2">
+              <div className="admin-grid-12">
+                <div className="lg-col-5">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                     {draft.sections.map((section, index) => {
                       const selected = section.id === activeSectionId;
                       return (
@@ -582,29 +582,27 @@ export default function AdminCourses() {
                           key={section.id}
                           type="button"
                           onClick={() => setActiveSectionId(section.id)}
-                          className={`w-full rounded-lg border px-4 py-3 text-left transition ${
-                            selected
-                              ? "border-blue-600 bg-blue-50"
-                              : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
-                          }`}
+                          className={`admin-select-btn ${selected ? 'active' : ''}`}
+                          style={{ padding: "0.75rem 1rem" }}
                         >
-                          <div className="flex items-start justify-between gap-3">
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <div>
-                              <p className="text-sm font-bold text-gray-950">
+                              <p className="admin-select-btn-title" style={{ margin: 0 }}>
                                 {section.label || "Untitled"}
                               </p>
-                              <p className="mt-1 text-xs text-gray-500">
+                              <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#9ca3af" }}>
                                 #{section.id} • {index === 0 ? "H1" : "H2"}
                               </p>
                             </div>
-                            <div className="flex gap-1">
+                            <div style={{ display: "flex", gap: "0.25rem" }}>
                               <button
                                 type="button"
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   moveSection(section.id, -1);
                                 }}
-                                className="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs font-bold text-gray-600 hover:bg-gray-50"
+                                className="admin-btn secondary"
+                                style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
                               >
                                 ↑
                               </button>
@@ -614,7 +612,8 @@ export default function AdminCourses() {
                                   event.stopPropagation();
                                   moveSection(section.id, 1);
                                 }}
-                                className="rounded-md border border-gray-200 bg-white px-2 py-1 text-xs font-bold text-gray-600 hover:bg-gray-50"
+                                className="admin-btn secondary"
+                                style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
                               >
                                 ↓
                               </button>
@@ -626,36 +625,37 @@ export default function AdminCourses() {
                   </div>
                 </div>
 
-                <div className="lg:col-span-7">
+                <div className="lg-col-7">
                   {!activeSection ? (
-                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-sm text-gray-600">
+                    <div style={{ border: "1px solid #e5e7eb", borderRadius: "0.5rem", backgroundColor: "#f9fafb", padding: "1.5rem", fontSize: "0.875rem", color: "#4b5563" }}>
                       Select a section to edit.
                     </div>
                   ) : (
-                    <div className="space-y-5">
-                      <div className="flex items-center justify-between gap-4">
-                        <h3 className="text-base font-bold text-gray-950">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                      <div style={{ display: "flex", justify: "space-between", alignItems: "center", justifyContent: "space-between" }}>
+                        <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>
                           Edit Section
                         </h3>
                         <button
                           type="button"
                           onClick={() => removeSection(activeSection.id)}
-                          className="rounded-lg bg-red-50 px-3 py-2 text-sm font-bold text-red-700 hover:bg-red-100"
+                          className="admin-btn danger-light"
+                          style={{ padding: "0.5rem 1rem", fontSize: "0.875rem" }}
                         >
                           Remove
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <label className="block space-y-2">
-                          <span className="text-sm font-bold text-gray-700">ID</span>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                        <label className="admin-input-group">
+                          <span className="admin-label">ID</span>
                           <input
                             value={activeSection.id}
                             onChange={(event) => {
                               const nextId = event.target.value.trim();
                               if (!nextId) return;
                               if (draft.sections.some((s) => s.id === nextId && s.id !== activeSection.id)) {
-                                return;
+                                  return;
                               }
                               const nextSections = draft.sections.map((s) =>
                                 s.id === activeSection.id ? { ...s, id: nextId } : s
@@ -663,51 +663,51 @@ export default function AdminCourses() {
                               setDraft({ ...draft, sections: nextSections });
                               setActiveSectionId(nextId);
                             }}
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                            className="admin-input mono"
                           />
-                          <p className="text-xs text-gray-500">
-                            Used in the URL hash (e.g. <span className="font-mono">#intro</span>).
+                          <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#6b7280" }}>
+                            Used in URL hash (e.g. <span style={{ fontFamily: "monospace" }}>#intro</span>).
                           </p>
                         </label>
 
-                        <label className="block space-y-2">
-                          <span className="text-sm font-bold text-gray-700">Sidebar Label</span>
+                        <label className="admin-input-group">
+                          <span className="admin-label">Sidebar Label</span>
                           <input
                             value={activeSection.label}
                             onChange={(event) =>
                               updateSection(activeSection.id, { label: event.target.value })
                             }
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                            className="admin-input"
                           />
                         </label>
                       </div>
 
-                      <label className="block space-y-2">
-                        <span className="text-sm font-bold text-gray-700">Heading</span>
+                      <label className="admin-input-group">
+                        <span className="admin-label">Heading</span>
                         <input
                           value={activeSection.heading}
                           onChange={(event) =>
                             updateSection(activeSection.id, { heading: event.target.value })
                           }
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                          className="admin-input"
                         />
                       </label>
 
-                      <label className="block space-y-2">
-                        <span className="text-sm font-bold text-gray-700">Body</span>
+                      <label className="admin-input-group">
+                        <span className="admin-label">Body</span>
                         <textarea
                           value={activeSection.body || ""}
                           onChange={(event) =>
                             updateSection(activeSection.id, { body: event.target.value })
                           }
                           rows={4}
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                          className="admin-textarea"
                         />
                       </label>
 
-                      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                        <div className="mb-3 flex items-center justify-between">
-                          <h4 className="text-sm font-bold text-gray-900">Bullets</h4>
+                      <div className="admin-card-inner-box" style={{ margin: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                          <h4 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 700 }}>Bullets</h4>
                           <button
                             type="button"
                             onClick={() =>
@@ -715,22 +715,23 @@ export default function AdminCourses() {
                                 items: [...(activeSection.items || []), { title: "", body: "" }],
                               })
                             }
-                            className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
+                            className="admin-btn secondary"
+                            style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
                           >
                             + Add
                           </button>
                         </div>
 
                         {(activeSection.items || []).length === 0 ? (
-                          <p className="text-sm text-gray-500">
+                          <p style={{ margin: 0, fontSize: "0.875rem", color: "#6b7280" }}>
                             Add bullet items (Title + Body).
                           </p>
                         ) : (
-                          <div className="space-y-3">
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                             {(activeSection.items || []).map((item, idx) => (
-                              <div key={idx} className="rounded-lg border border-gray-200 bg-white p-3">
-                                <div className="mb-2 flex items-center justify-between">
-                                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                              <div key={idx} className="admin-aside-card" style={{ padding: "0.75rem", backgroundColor: "#ffffff" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                                  <p className="admin-card-pre" style={{ color: "#9ca3af" }}>
                                     Item {idx + 1}
                                   </p>
                                   <button
@@ -740,7 +741,8 @@ export default function AdminCourses() {
                                       next.splice(idx, 1);
                                       updateSection(activeSection.id, { items: next });
                                     }}
-                                    className="text-xs font-bold text-red-600 hover:underline"
+                                    className="admin-btn danger-light"
+                                    style={{ padding: "0.125rem 0.375rem", fontSize: "0.625rem" }}
                                   >
                                     Remove
                                   </button>
@@ -753,7 +755,8 @@ export default function AdminCourses() {
                                     updateSection(activeSection.id, { items: next });
                                   }}
                                   placeholder="Title"
-                                  className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                                  className="admin-input"
+                                  style={{ marginBottom: "0.5rem" }}
                                 />
                                 <textarea
                                   value={item.body}
@@ -764,7 +767,7 @@ export default function AdminCourses() {
                                   }}
                                   placeholder="Body"
                                   rows={2}
-                                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                                  className="admin-textarea"
                                 />
                               </div>
                             ))}
@@ -772,16 +775,16 @@ export default function AdminCourses() {
                         )}
                       </div>
 
-                      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                        <h4 className="text-sm font-bold text-gray-900">Code Block</h4>
-                        <div className="mt-3 space-y-3">
+                      <div className="admin-card-inner-box" style={{ margin: 0 }}>
+                        <h4 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 700 }}>Code Block</h4>
+                        <div style={{ marginTop: "0.75rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                           <input
                             value={activeSection.codeLabel || ""}
                             onChange={(event) =>
                               updateSection(activeSection.id, { codeLabel: event.target.value })
                             }
                             placeholder="Optional label (e.g. -- Injected query)"
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                            className="admin-input mono"
                           />
                           <textarea
                             value={activeSection.code || ""}
@@ -791,17 +794,19 @@ export default function AdminCourses() {
                             placeholder="Code content"
                             rows={4}
                             spellCheck={false}
-                            className="w-full rounded-md border border-gray-300 bg-gray-950 px-3 py-2 font-mono text-sm text-green-200 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                            className="admin-textarea mono"
                           />
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                        <h4 className="text-sm font-bold text-gray-900">Cards</h4>
-                        <div className="mt-3 flex items-center justify-between">
-                          <p className="text-sm text-gray-500">
-                            Small callout cards (tone + title + body).
-                          </p>
+                      <div className="admin-card-inner-box" style={{ margin: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                          <div>
+                            <h4 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 700 }}>Cards</h4>
+                            <p style={{ margin: "0.125rem 0 0 0", fontSize: "0.75rem", color: "#6b7280" }}>
+                              Small callout cards (tone + title + body).
+                            </p>
+                          </div>
                           <button
                             type="button"
                             onClick={() =>
@@ -812,18 +817,19 @@ export default function AdminCourses() {
                                 ],
                               })
                             }
-                            className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
+                            className="admin-btn secondary"
+                            style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
                           >
                             + Add
                           </button>
                         </div>
 
                         {(activeSection.cards || []).length > 0 && (
-                          <div className="mt-3 space-y-3">
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "0.75rem" }}>
                             {(activeSection.cards || []).map((card, idx) => (
-                              <div key={idx} className="rounded-lg border border-gray-200 bg-white p-3">
-                                <div className="mb-2 flex items-center justify-between">
-                                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                              <div key={idx} className="admin-aside-card" style={{ padding: "0.75rem", backgroundColor: "#ffffff" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                                  <p className="admin-card-pre" style={{ color: "#9ca3af" }}>
                                     Card {idx + 1}
                                   </p>
                                   <button
@@ -833,13 +839,14 @@ export default function AdminCourses() {
                                       next.splice(idx, 1);
                                       updateSection(activeSection.id, { cards: next });
                                     }}
-                                    className="text-xs font-bold text-red-600 hover:underline"
+                                    className="admin-btn danger-light"
+                                    style={{ padding: "0.125rem 0.375rem", fontSize: "0.625rem" }}
                                   >
                                     Remove
                                   </button>
                                 </div>
 
-                                <div className="mb-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", marginBottom: "0.5rem" }}>
                                   <input
                                     value={card.title}
                                     onChange={(event) => {
@@ -848,7 +855,7 @@ export default function AdminCourses() {
                                       updateSection(activeSection.id, { cards: next });
                                     }}
                                     placeholder="Title"
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                                    className="admin-input"
                                   />
                                   <select
                                     value={card.tone}
@@ -860,7 +867,7 @@ export default function AdminCourses() {
                                       };
                                       updateSection(activeSection.id, { cards: next });
                                     }}
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                                    className="admin-select"
                                   >
                                     {["green", "blue", "amber", "red"].map((tone) => (
                                       <option key={tone} value={tone}>
@@ -879,7 +886,7 @@ export default function AdminCourses() {
                                   }}
                                   placeholder="Body"
                                   rows={2}
-                                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                                  className="admin-textarea"
                                 />
                               </div>
                             ))}
@@ -887,9 +894,9 @@ export default function AdminCourses() {
                         )}
                       </div>
 
-                      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                        <h4 className="text-sm font-bold text-gray-900">Video</h4>
-                        <p className="mt-1 text-sm text-gray-500">
+                      <div className="admin-card-inner-box" style={{ margin: 0 }}>
+                        <h4 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 700 }}>Video</h4>
+                        <p style={{ margin: "0.125rem 0 0 0", fontSize: "0.75rem", color: "#6b7280" }}>
                           Paste an embeddable URL (e.g. YouTube embed link).
                         </p>
                         <input
@@ -898,13 +905,14 @@ export default function AdminCourses() {
                             updateSection(activeSection.id, { videoUrl: event.target.value })
                           }
                           placeholder="https://www.youtube.com/embed/..."
-                          className="mt-3 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                          className="admin-input mono"
+                          style={{ marginTop: "0.75rem" }}
                         />
                       </div>
 
-                      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                        <div className="mb-3 flex items-center justify-between">
-                          <h4 className="text-sm font-bold text-gray-900">Quick Check</h4>
+                      <div className="admin-card-inner-box" style={{ margin: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                          <h4 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 700 }}>Quick Check</h4>
                           <button
                             type="button"
                             onClick={() =>
@@ -912,14 +920,15 @@ export default function AdminCourses() {
                                 quizOptions: [...(activeSection.quizOptions || []), ""],
                               })
                             }
-                            className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
+                            className="admin-btn secondary"
+                            style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
                           >
                             + Option
                           </button>
                         </div>
 
-                        <label className="block space-y-2">
-                          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                        <label className="admin-input-group">
+                          <span className="admin-label" style={{ fontSize: "0.75rem", textTransform: "uppercase", trackingWidest: "0.05em", color: "#9ca3af" }}>
                             Question
                           </span>
                           <textarea
@@ -928,14 +937,14 @@ export default function AdminCourses() {
                               updateSection(activeSection.id, { quizQuestion: event.target.value })
                             }
                             rows={2}
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                            className="admin-textarea"
                           />
                         </label>
 
                         {(activeSection.quizOptions || []).length > 0 && (
-                          <div className="mt-3 space-y-2">
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.75rem" }}>
                             {(activeSection.quizOptions || []).map((option, idx) => (
-                              <div key={idx} className="flex gap-2">
+                              <div key={idx} style={{ display: "flex", gap: "0.5rem" }}>
                                 <input
                                   value={option}
                                   onChange={(event) => {
@@ -944,7 +953,7 @@ export default function AdminCourses() {
                                     updateSection(activeSection.id, { quizOptions: next });
                                   }}
                                   placeholder={`Option ${idx + 1}`}
-                                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                                  className="admin-input"
                                 />
                                 <button
                                   type="button"
@@ -953,7 +962,8 @@ export default function AdminCourses() {
                                     next.splice(idx, 1);
                                     updateSection(activeSection.id, { quizOptions: next });
                                   }}
-                                  className="rounded-md bg-red-50 px-3 text-sm font-bold text-red-700 hover:bg-red-100"
+                                  className="admin-btn danger-light"
+                                  style={{ padding: "0.5rem 1rem", fontSize: "0.875rem" }}
                                 >
                                   ×
                                 </button>
