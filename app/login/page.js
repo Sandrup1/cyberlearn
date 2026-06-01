@@ -4,14 +4,29 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveUserProfile } from "../lib/user-profile";
 import styles from "./login.module.css";
+import Snackbar from "@mui/material/Snackbar";
 
 export default function Login() {
   const router = useRouter();
+
   const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({
+      ...snackbar,
+      open: false,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,21 +50,38 @@ export default function Login() {
           role: data.user?.role,
           title: data.user?.title,
           memberSince: data.user?.createdAt
-            ? new Date(data.user.createdAt).getFullYear().toString()
+            ? new Date(data.user.createdAt)
+                .getFullYear()
+                .toString()
             : undefined,
         });
 
-        alert("Login successful!");
-        if (data.user?.role === "Admin") {
-          router.push("/admin");
-        } else {
-          router.push("/dashboard");
-        }
+        setSnackbar({
+          open: true,
+          message: "Login successful!",
+        });
+
+        // Give user time to see the snackbar
+        setTimeout(() => {
+          if (data.user?.role === "Admin") {
+            router.push("/admin");
+          } else {
+            router.push("/dashboard");
+          }
+        }, 1000);
       } else {
-        alert(data.message || "Login failed");
+        setSnackbar({
+          open: true,
+          message: data.message || "Login failed",
+        });
       }
-    } catch {
-      alert("Something went wrong. Check your connection.");
+    } catch (error) {
+      console.error(error);
+
+      setSnackbar({
+        open: true,
+        message: "Something went wrong. Please try again later.",
+      });
     } finally {
       setLoading(false);
     }
@@ -62,7 +94,10 @@ export default function Login() {
           Login to CyberLearn
         </h1>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form
+          onSubmit={handleSubmit}
+          className={styles.form}
+        >
           <input
             type="text"
             placeholder="Email or Username"
@@ -103,11 +138,25 @@ export default function Login() {
 
         <p className={styles.footer}>
           Don&apos;t have an account?{" "}
-          <a href="/signup" className={styles.link}>
+          <a
+            href="/signup"
+            className={styles.link}
+          >
             Sign up
           </a>
         </p>
       </div>
+
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        message={snackbar.message}
+      />
     </div>
   );
 }

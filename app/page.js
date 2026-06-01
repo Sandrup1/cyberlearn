@@ -1,7 +1,32 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
 
 function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const raw = localStorage.getItem("cyberlearn:user-profile");
+    if (raw) {
+      try {
+        const profile = JSON.parse(raw);
+        if (profile && profile.email && profile.email !== "student@cyberlearn.local") {
+          setTimeout(() => {
+            setIsLoggedIn(true);
+            if (profile.role === "Admin") {
+              setIsAdmin(true);
+            }
+          }, 0);
+        }
+      } catch (e) {
+        console.error("Failed to parse user profile:", e);
+      }
+    }
+  }, []);
+
   return (
     <div className={styles.container}>
       {/* Navbar */}
@@ -10,13 +35,21 @@ function Home() {
 
         <div className={styles.navLinks}>
           <Link href="/" className={styles.navLink}>Home</Link>
-          <Link href="/" className={styles.navLink}>Learn</Link>
+          <Link href={isLoggedIn ? "/learn" : "#learn"} className={styles.navLink}>Learn</Link>
 
-          <Link href="/signup">
-            <button className={styles.signupButton}>
-              Sign Up
-            </button>
-          </Link>
+          {isLoggedIn ? (
+            <Link href={isAdmin ? "/admin" : "/dashboard"}>
+              <button className={styles.signupButton}>
+                {isAdmin ? "Admin Panel" : "Go to Dashboard"}
+              </button>
+            </Link>
+          ) : (
+            <Link href="/signup">
+              <button className={styles.signupButton}>
+                Sign Up
+              </button>
+            </Link>
+          )}
         </div>
       </nav>
 
@@ -33,9 +66,9 @@ function Home() {
             personalized recommendations.
           </p>
 
-          <Link href="/signup">
+          <Link href={isLoggedIn ? (isAdmin ? "/admin" : "/dashboard") : "/signup"}>
             <button className={styles.getStartedButton}>
-              Get Started
+              {isLoggedIn ? "Go to Dashboard" : "Get Started"}
             </button>
           </Link>
         </div>

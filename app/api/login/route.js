@@ -9,24 +9,13 @@ export async function POST(req) {
       return Response.json({ message: "Missing fields" }, { status: 400 });
     }
 
-    // Hardcoded admin login
-    if (email.toLowerCase() === "admin@gmail.com" && password === "root") {
-      return Response.json({ 
-        message: "Login successful",
-        user: { 
-          name: "Administrator", 
-          email: "admin@gmail.com",
-          role: "Admin",
-          title: "System Administrator"
-        } 
-      }, { status: 200 });
-    }
-
     const client = await clientPromise;
     const db = client.db("cyberlearn");
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     //Find the user
-    const user = await db.collection("users").findOne({ email });
+    const user = await db.collection("users").findOne({ email: normalizedEmail });
 
     if (!user) {
       return Response.json({ message: "Invalid email or password" }, { status: 401 });
@@ -39,10 +28,23 @@ export async function POST(req) {
       return Response.json({ message: "Invalid email or password" }, { status: 401 });
     }
 
+    // Prepare user response
+    const userResponse = {
+      name: user.name,
+      email: user.email,
+    };
+
+    // If the user is admin, add admin specific fields
+    if (user.role && user.role.toLowerCase() === "admin") {
+      userResponse.role = "Admin";
+      userResponse.title = user.title || "System Administrator";
+      userResponse.createdAt = user.createdAt;
+    }
+
     //if success
     return Response.json({ 
       message: "Login successful",
-      user: { name: user.name, email: user.email } 
+      user: userResponse
     }, { status: 200 });
 
   } catch (error) {

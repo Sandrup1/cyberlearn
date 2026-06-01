@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^9.0.1",
     "bcryptjs": "^3.0.3",
     "mongodb": "^7.1.1",
